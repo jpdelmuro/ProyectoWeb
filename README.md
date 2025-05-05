@@ -1,4 +1,4 @@
-# ProyectoWeb
+# Proyecto Web
 # 🛒 Planificador de Compras del Hogar
 
 ## Descripción del Proyecto
