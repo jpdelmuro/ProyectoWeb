@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Estadísticas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://kit.fontawesome.com/4ebc99a520.js" crossorigin="anonymous"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+
+  <!-- Chart.js + Plugin datalabels -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+
+  <style>
+    body {
+      background-color: #4c6fc0;
+      font-family: 'Poppins', sans-serif;
+      text-align: center;
+      color: white;
+    }
+    .bg-custom {
+      background-color: #7a96d5;
+    }
+    .perfilNav {
+      color: white;
+      font-size: 1.25rem;
+    }
+    .logNav {
+      color: white;
+      font-size: 1.40rem;
+    }
+    h1, h4 {
+      margin-top: 30px;
+      font-weight: bold;
+    }
+    canvas {
+      margin-top: 20px;
+      max-width: 100%;
+      height: auto;
+    }
+    .modal-content {
+      color: black;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav class="navbar navbar-expand navbar-primary bg-custom">
+      <div class="container-fluid">
+        <div class="navbar-nav letrasNav">
+          <a class="nav-item nav-link perfilNav" href="index.html">
+            <i class="fa-solid fa-house"></i>
+          </a>
+        </div>
+        <div class="navbar-nav ms-auto">
+          <a class="nav-item nav-link logNav" href="#" data-bs-toggle="modal" data-bs-target="#modalCerrarSesion">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Modal cerrar sesión -->
+    <div class="modal fade" id="modalCerrarSesion" tabindex="-1" aria-labelledby="modalCerrarSesionLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalCerrarSesionLabel">¿Cerrar sesión?</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            ¿Estás seguro que deseas cerrar sesión?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <a href="login.html" class="btn btn-danger">Cerrar sesión</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container-fluid d-flex flex-column align-items-center px-3">
+    <h1 class="mt-4 text-center">Estadísticas</h1>
+    <h4 class="text-center">Productos más comprados</h4>
+    <div class="w-100 d-flex justify-content-center">
+      <canvas id="graficaPastel" style="max-width: 100%; max-height: 300px;"></canvas>
+    </div>
+  </main>
+
+  <script>
+    const ctx = document.getElementById('graficaPastel');
+    new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: ['Huevo', 'Leche', 'Jabón', 'Pan'],
+        datasets: [{
+          data: [50, 25, 15, 10],
+          backgroundColor: ['#f44336', '#ffc107', '#4dd0e1', '#546e7a'],
+          borderWidth: 0,
+          hoverOffset: 20
+        }]
+      },
+      options: {
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            enabled: true
+          },
+          datalabels: {
+            color: '#ffffff',
+            font: {
+              weight: 'bold',
+              size: 14
+            },
+            formatter: function(value, context) {
+              return context.chart.data.labels[context.dataIndex];
+            }
+          }
+        }
+      },
+      plugins: [ChartDataLabels]
+    });
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
