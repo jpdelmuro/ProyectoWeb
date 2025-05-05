@@ -6,6 +6,7 @@
         <!-- Required meta tags -->
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+        <!-- Fuente -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
@@ -45,9 +46,53 @@
                     font-size: 1.1rem;
                     padding: 0 12px;
                 }
-                .dropdown-toggle::after {
-            display: none !important;
-        }
+                .btn-large {
+                    height: 50px;
+                    font-size: 1.1rem;
+                    padding: 0 12px;
+                }
+                #perfilDropdown::after {
+                    display: none !important;
+                }
+                .btn-filter {
+                    background-color: #7a96d5;
+                    color: white;
+                    border: none;
+                }
+                .btn-filter:hover {
+                    background-color: #6b89c8;
+                }
+                .list-group-item i {
+                    color: #dc3545;
+                    cursor: pointer;
+                }
+                a.btn-stock {
+                    display: inline-block;
+                    text-align: center;
+                    text-decoration: none;
+                    background-color: #7a96d5;
+                    color: white;
+                    border: none;
+                    padding: 0.75rem 1rem;
+                    border-radius: 5px;
+                    font-size: 1.1rem;
+                    font-family: 'Poppins', sans-serif;
+                }
+                    a.btn-stock:hover {
+                    background-color: #6b89c8;
+                    color: white;
+                    text-decoration: none;
+                }
+                .productos-scroll {
+                    max-height: 230px;
+                    overflow-y: scroll;
+                    background-color: transparent;
+                    padding: 0;
+                    scrollbar-width: none;
+                }
+                .productos-scroll::-webkit-scrollbar {
+                    display: none;
+                }
             </style>
     </head>
     <body>
@@ -74,7 +119,6 @@
                     </div>
                 </div>
             </nav>
-
             <!-- modal cierre sesión -->
             <div class="modal fade" id="modalCerrarSesion" tabindex="-1" aria-labelledby="modalCerrarSesionLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
@@ -109,6 +153,74 @@
                         <input type="text" class="form-control" placeholder="Añadir un artículo">
                         <button class="btn btn-add" >Añadir</button>
                     </div>
+                </div>
+            </div>
+
+            <!-- Menu filtrar por categoría -->
+            <div class="container px-3 mt-3">
+                <div class="d-flex justify-content-center">
+                    <div class="dropdown w-100 w-sm-75 w-md-50 w-lg-25" style="max-width: 400px;">
+                        <button
+                            class="btn btn-filter btn-large dropdown-toggle w-100"
+                            type="button"
+                            id="dropdownMenuButton"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Filtrar por categoría
+                        </button>
+                        <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton">
+                            <li><a class="dropdown-item" href="#" data-category="">Todas</a></li>
+                            <li><a class="dropdown-item" href="#" data-category="alimentos">Alimentos</a></li>
+                            <li><a class="dropdown-item" href="#" data-category="higiene">Productos de higiene</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de productos hardcodeada -->
+            <div class="container px-3 mt-3 mb-3">
+                <div class="mx-auto" style="max-width: 400px;">
+                  <div class="productos-scroll">
+                    <ul class="list-group" id="listaProductos">
+                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="alimentos">
+                        Pan <i class="fa-solid fa-trash"></i>
+                      </li>
+                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="alimentos">
+                        Leche <i class="fa-solid fa-trash"></i>
+                      </li>
+                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="alimentos">
+                        Huevos <i class="fa-solid fa-trash"></i>
+                      </li>
+                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="higiene">
+                        Jabón <i class="fa-solid fa-trash"></i>
+                      </li>
+                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="higiene">
+                        Jabón <i class="fa-solid fa-trash"></i>
+                      </li>
+                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="higiene">
+                        Jabón <i class="fa-solid fa-trash"></i>
+                      </li>
+                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="higiene">
+                        Jabón <i class="fa-solid fa-trash"></i>
+                      </li>
+                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="higiene">
+                        Jabón <i class="fa-solid fa-trash"></i>
+                      </li>
+                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="higiene">
+                        Jabón <i class="fa-solid fa-trash"></i>
+                      </li>
+                      
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+            <!-- Boton stock ideal -->
+            <div class="container px-3 mt-3 mb-5">
+                <div class="d-flex justify-content-center">
+                    <a href="stock.html" class="btn btn-stock btn-large w-100 w-sm-75 w-md-50 w-lg-25" style="max-width: 400px;">
+                        Stock Ideal
+                    </a>
                 </div>
             </div>
 
