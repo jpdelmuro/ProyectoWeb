@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <title>Añadir colaborador</title>
+    <script src="https://kit.fontawesome.com/4ebc99a520.js" crossorigin="anonymous"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+
+    <style>
+      body {
+        background-color: #4c6fc0;
+        font-family: 'Poppins', sans-serif;
+      }
+
+      .bg-custom {
+        background-color: #7a96d5;
+      }
+
+      .perfilNav, .logNav {
+        color: white;
+        font-size: 1.50rem;
+      }
+
+      .form-container {
+        background-color: #4c6fc0;
+        padding: 3rem;
+        text-align: center;
+        color: white;
+      }
+
+      .btn-primary {
+        background-color: #7a96d5;
+        border: none;
+        font-weight: 400; 
+      }
+
+      .btn-primary:hover {
+        background-color: #5f7ab4;
+      }
+
+      h2, h4 {
+        font-weight: 700; 
+        font-size: 30px;
+      }
+
+      label, input, .btn {
+        font-weight: 400; 
+        font-size: 20px;
+      }
+
+      /* Oculta la flechita del dropdown */
+      .dropdown-toggle::after {
+        display: none !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <nav class="navbar navbar-expand bg-custom">
+        <div class="container-fluid px-3">
+          <!-- Perfil con dropdown -->
+          <div class="navbar-nav">
+            <div class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle perfilNav p-0" href="#" id="perfilDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fa-solid fa-user"></i>
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="perfilDropdown">
+                <li><a class="dropdown-item" href="perfil.html">Editar perfil</a></li>
+                <li><a class="dropdown-item" href="colaborador.html">Agregar colaborador</a></li>
+              </ul>
+            </div>
+          </div>
+      
+          <!-- Íconos a la derecha -->
+          <div class="navbar-nav ms-auto">
+            <a class="nav-link logNav p-0 me-2" href="#"><i class="fa-solid fa-chart-line"></i></a>
+            <a class="nav-link logNav p-0" href="#"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+          </div>
+        </div>
+      </nav>
+      
+      
+    </header>
+
+    <main>
+      <!-- Título principal arriba de todo -->
+      <div class="text-center pt-5">
+        <h2 class="text-white" style="font-size: 3rem; font-weight: 700;">Añadir a alguien</h2>
+      </div>
+
+      <!-- Formulario dentro del container -->
+      <div class="container d-flex justify-content-center align-items-center" style="height: 75vh;">
+        <div class="form-container">
+          <h4>¿A quién quieres añadir?</h4>
+          <form onsubmit="return mostrarModal(event)">
+            <div class="mb-3">
+              <label for="email" class="form-label">Correo Electrónico</label>
+              <input type="email" class="form-control" id="email" placeholder="correo@ejemplo.com" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Añadir</button>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <!-- Modal de Confirmación -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-custom text-white">
+            <h5 class="modal-title" id="confirmModalLabel">Confirmar invitación</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            ¿Deseas añadir a <strong id="emailDestino"></strong> al inventario?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary" onclick="confirmarInvitacion()">Confirmar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer></footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+    <!-- JS para modal -->
+    <script>
+      function mostrarModal(event) {
+        event.preventDefault(); // evita enviar el formulario
+        const email = document.getElementById("email").value;
+        document.getElementById("emailDestino").textContent = email;
+
+        const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+        modal.show();
+
+        return false;
+      }
+
+      function confirmarInvitacion() {
+        alert("Usuario añadido correctamente.");
+        const modalEl = document.getElementById('confirmModal');
+        const modal = bootstrap.Modal.getInstance(modalEl);
+        modal.hide();
+        document.getElementById("email").value = "";
+      }
+    </script>
+  </body>
+</html>
