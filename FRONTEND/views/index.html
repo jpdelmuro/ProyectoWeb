@@ -147,13 +147,12 @@
             <div class="container px-3">
                 <div class="mx-auto" style="max-width: 400px;">
                     <div class="input-group mt-3 input-large">
-                        <input type="text" class="form-control" placeholder="Añadir un artículo">
+                        <input type="text" class="form-control" id="inputRapido" placeholder="Añadir un artículo">
                         <button class="btn btn-add" data-bs-toggle="modal" data-bs-target="#modalAgregarProducto">Añadir</button>
                     </div>
                 </div>
             </div>
-
-                        <!-- Modal Agregar Producto -->
+             <!-- Modal Agregar Producto -->
             <div class="modal fade" id="modalAgregarProducto" tabindex="-1" aria-labelledby="modalAgregarProductoLabel" aria-hidden="true">
                 <div class="modal-dialog">
                 <div class="modal-content">
@@ -161,48 +160,40 @@
                     <h5 class="modal-title" id="modalAgregarProductoLabel">Agregar producto</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                     </div>
-                    <div class="modal-body">
                     <form id="formAgregarProducto">
+                    <div class="modal-body">
                         <div class="mb-3">
-                            <label for="nombreProducto" class="form-label">Nombre del producto</label>
-                            <input type="text" class="form-control" id="nombreProducto" placeholder="Ej. Leche" required>
+                        <label for="nombreProducto" class="form-label">Nombre del producto</label>
+                        <input type="text" class="form-control" id="nombreProducto" required>
                         </div>
                         <div class="mb-3">
-                            <label for="cantidadProducto" class="form-label">Cantidad</label>
-                            <input type="number" class="form-control" id="cantidadProducto" placeholder="Ej. 2" min="1" required>
+                        <label for="cantidadProducto" class="form-label">Cantidad</label>
+                        <input type="number" class="form-control" id="cantidadProducto" min="1" required>
                         </div>
                         <div class="mb-3">
                         <label for="categoriaProducto" class="form-label">Categoría</label>
-                            <select class="form-select" id="categoriaProducto" required>
-                                <option selected disabled>Selecciona una categoría</option>
-                                <option value="alimentos">Alimentos</option>
-                                <option value="higiene">Productos de higiene</option>
-                            </select>
+                        <select class="form-select" id="categoriaProducto" required>
+                            <option selected disabled value="">Selecciona una categoría</option>
+                            <option value="FrutasyVerduras">Frutas y verduras</option>
+                            <option value="Animal">De origen animal</option>
+                            <option value="Cereales">Cereales, granos y panadería</option>
+                            <option value="Snacks">Snacks</option>
+                            <option value="Bebidas">Bebidas</option>
+                            <option value="Limpieza">Limpieza</option>
+                            <option value="Higiene">Higiene</option>
+                            <option value="Otro">Otro</option>
+                        </select>
                         </div>
-                        <div class="mb-3">
-                        <p>¿Tienes el producto a la mano?</p>
-                        <button type="button" id="iniciar-escaneo" class="btn btn-outline-secondary btn-sm mb-2">
-                            Activar escaneo de código de barras
-                        </button>
-                        <div id="escaneo-contenedor" class="d-none">
-                            <video id="video" class="rounded shadow mb-2" style="width: 100%; height: auto;"></video>
-                            <div class="d-flex justify-content-center">
-                            <button type="button" id="scan-button" class="btn btn-outline-primary rounded-circle" style="width: 60px; height: 60px;">
-                                <i class="fa-solid fa-camera"></i>
-                            </button>
-                            </div>
-                            <ul id="barcode-history" class="mt-3 list-group small"></ul>
-                        </div>
-                        </div>
-                    </form>
                     </div>
                     <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" form="formAgregarProducto">Guardar producto</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
                     </div>
+                    </form>
                 </div>
                 </div>
             </div>
+            
 
             <!-- Menu filtrar por categoría -->
             <div class="container px-3 mt-3">
@@ -218,8 +209,14 @@
                         </button>
                         <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton">
                             <li><a class="dropdown-item" href="#" data-category="">Todas</a></li>
-                            <li><a class="dropdown-item" href="#" data-category="alimentos">Alimentos</a></li>
-                            <li><a class="dropdown-item" href="#" data-category="higiene">Productos de higiene</a></li>
+                            <li><a class="dropdown-item" href="#" data-category="FrutasyVerduras">Frutas y verduras</a></li>
+                            <li><a class="dropdown-item" href="#" data-category="Animal">De origen animal</a></li>
+                            <li><a class="dropdown-item" href="#" data-category="Cereales">Cereales, granos y panadería</a></li>
+                            <li><a class="dropdown-item" href="#" data-category="Snacks">Snacks</a></li>
+                            <li><a class="dropdown-item" href="#" data-category="Bebidas">Bebidas</a></li>
+                            <li><a class="dropdown-item" href="#" data-category="Limpieza">Limpieza</a></li>
+                            <li><a class="dropdown-item" href="#" data-category="higiene">Higiene</a></li>
+                            <li><a class="dropdown-item" href="#" data-category="Otro">Otro</a></li>
                         </ul>
                     </div>
                 </div>
@@ -230,34 +227,18 @@
                 <div class="mx-auto" style="max-width: 400px;">
                   <div class="productos-scroll">
                     <ul class="list-group" id="listaProductos">
-                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="alimentos">
+                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="Cereales">
                         Pan <i class="fa-solid fa-check" style="color: green;"></i>
                       </li>
-                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="alimentos">
+                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="Animal">
                         Leche <i class="fa-solid fa-check" style="color: green;"></i>
                       </li>
-                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="alimentos">
+                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="Animal">
                         Huevos <i class="fa-solid fa-check" style="color: green;"></i>
                       </li>
                       <li class="list-group-item d-flex justify-content-between align-items-center" data-category="higiene">
                         Jabón <i class="fa-solid fa-check" style="color: green;"></i>
                       </li>
-                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="higiene">
-                        Jabón <i class="fa-solid fa-check" style="color: green;"></i>
-                      </li>
-                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="higiene">
-                        Jabón <i class="fa-solid fa-check" style="color: green;"></i>
-                      </li>
-                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="higiene">
-                        Jabón <i class="fa-solid fa-check" style="color: green;"></i>
-                      </li>
-                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="higiene">
-                        Jabón <i class="fa-solid fa-check" style="color: green;"></i>
-                      </li>
-                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="higiene">
-                        Jabón <i class="fa-solid fa-check" style="color: green;"></i>
-                      </li>
-                      
                     </ul>
                   </div>
                 </div>
@@ -318,74 +299,52 @@
             });
             });
             </script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+
+            <!-- Formulario añadir -->
             <script>
-            document.addEventListener("DOMContentLoaded", () => {
-              const video = document.getElementById("video");
-              const iniciarEscaneo = document.getElementById("iniciar-escaneo");
-              const escaneoContenedor = document.getElementById("escaneo-contenedor");
-              const scanButton = document.getElementById("scan-button");
-              const historyEl = document.getElementById("barcode-history");
-              const scannedCodes = new Set();
-              let streamActivo = false;
-            
-              iniciarEscaneo.addEventListener("click", async () => {
-                escaneoContenedor.classList.remove("d-none");
-            
-                if (!streamActivo) {
-                  try {
-                    const stream = await navigator.mediaDevices.getUserMedia({
-                      video: { facingMode: "environment" },
-                      audio: false
-                    });
-                    video.srcObject = stream;
-                    await video.play();
-                    streamActivo = true;
-                  } catch (err) {
-                    console.error("Error al acceder a la cámara:", err);
-                    alert("No se pudo acceder a la cámara.");
-                  }
-                }
-              });
-            
-              scanButton.addEventListener("click", () => {
-                if (!streamActivo || video.videoWidth === 0) {
-                  alert("La cámara no está lista aún.");
-                  return;
-                }
-            
-                const canvas = document.createElement("canvas");
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                const ctx = canvas.getContext("2d");
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-                Quagga.decodeSingle({
-                  src: canvas.toDataURL(),
-                  numOfWorkers: 0,
-                  inputStream: { size: 800 },
-                  decoder: {
-                    readers: ["code_128_reader", "ean_reader", "ean_8_reader", "upc_reader"]
-                  },
-                  locate: true
-                }, (result) => {
-                  if (result && result.codeResult) {
-                    const code = result.codeResult.code;
-                    if (!scannedCodes.has(code)) {
-                      scannedCodes.add(code);
-                      const li = document.createElement("li");
-                      li.className = "list-group-item";
-                      li.textContent = `Código: ${code}`;
-                      historyEl.appendChild(li);
-                      console.log("✅ Código detectado:", code);
+                document.addEventListener("DOMContentLoaded", function () {
+                  const form = document.getElementById("formAgregarProducto");
+                  const lista = document.getElementById("listaProductos");
+                
+                  form.addEventListener("submit", function (e) {
+                    e.preventDefault();
+                
+                    const nombre = document.getElementById("nombreProducto").value.trim();
+                    const cantidad = document.getElementById("cantidadProducto").value.trim();
+                    const categoria = document.getElementById("categoriaProducto").value;
+                
+                    if (nombre && cantidad && categoria) {
+                      const nuevoItem = document.createElement("li");
+                      nuevoItem.className = "list-group-item d-flex justify-content-between align-items-center";
+                      nuevoItem.setAttribute("data-category", categoria);
+                      nuevoItem.innerHTML = `
+                        ${nombre} (x${cantidad}) 
+                        <i class="fa-solid fa-check" style="color: green;"></i>
+                      `;
+                
+                      lista.appendChild(nuevoItem);
+                
+                      // Resetear formulario y cerrar modal
+                      form.reset();
+                      const modal = bootstrap.Modal.getInstance(document.getElementById('modalAgregarProducto'));
+                      modal.hide();
                     }
-                  } else {
-                    alert("No se detectó ningún código. Intenta enfocar mejor.");
-                  }
+                  });
                 });
-              });
-            });
-        </script>
-  
+            </script>
+
+            <!-- Script buscador en modal -->
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                  const inputRapido = document.getElementById("inputRapido");
+                  const inputNombre = document.getElementById("nombreProducto");
+                  const modalAgregar = document.getElementById("modalAgregarProducto");
+                
+                  modalAgregar.addEventListener('show.bs.modal', function () {
+                    const texto = inputRapido.value.trim();
+                    inputNombre.value = texto;
+                  });
+                });
+            </script>
     </body>
 </html>
