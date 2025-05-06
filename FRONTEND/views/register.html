@@ -27,6 +27,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="container-fluid vh-100 d-flex flex-column flex-md-row">
     <div class="d-flex justify-content-center align-items-center w-100 w-md-50">
@@ -40,27 +41,35 @@
       </div>
 
       <!-- Formulario de registro -->
-      <form class="w-100" style="max-width: 320px;">
+      <form id="formRegister" class="w-100" style="max-width: 320px;">
         <div class="mb-3">
-          <label for="usuario" class="form-label">Nombre de usuario</label>
-          <input type="text" class="form-control" id="usuario" required>
+          <label for="nombre" class="form-label">Nombre de usuario</label>
+          <input type="text" class="form-control" id="nombre" required>
         </div>
         <div class="mb-3">
           <label for="correo" class="form-label">Correo electrónico</label>
           <input type="email" class="form-control" id="correo" required>
         </div>
         <div class="mb-3">
-          <label for="contrasena" class="form-label">Contraseña</label>
-          <input type="password" class="form-control" id="contrasena" required>
+          <label for="pass" class="form-label">Contraseña</label>
+          <input type="password" class="form-control" id="pass" required>
         </div>
         <div class="mb-3">
-          <label for="confirmar" class="form-label">Confirmar contraseña</label>
-          <input type="password" class="form-control" id="confirmar" required>
+          <label for="confirmPass" class="form-label">Confirmar contraseña</label>
+          <input type="password" class="form-control" id="confirmPass" required>
         </div>
         <br>
-        <button type="submit" style="background-color: #7a96d5; color: #ffffff;" class="btn btn-stock w-100 fw-bold">Registrarse</button>
+        <button type="submit" style="background-color: #7a96d5; color: #ffffff;" class="btn btn-stock w-100 fw-bold">
+          Registrarse
+        </button>
       </form>
+      
     </div>
   </div>
 </body>
+<script type="module">
+  import { register } from './controllers/auth_controllers.js';
+
+  document.getElementById("formRegister").addEventListener("submit", register);
+</script>
 </html>

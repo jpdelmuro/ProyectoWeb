@@ -1,7 +1,7 @@
-// backend/server.js
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path'); 
 require('dotenv').config();
 
 const userRoutes = require('./routes/users');
@@ -13,7 +13,11 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Rutas
+
+app.use(express.static(path.join(__dirname, '../FRONTEND/views')));
+app.use('/controllers', express.static(path.join(__dirname, '../FRONTEND/controllers')));
+
+// API routes
 app.use('/api/users', userRoutes);
 
 // Conexión a MongoDB
@@ -24,6 +28,7 @@ mongoose.connect(process.env.MONGO_URI, {
 .then(() => console.log('Conectado a MongoDB'))
 .catch(err => console.error('Error al conectar MongoDB:', err));
 
+// Start server
 app.listen(port, () => {
   console.log(`Servidor backend corriendo en puerto ${port}`);
 });

@@ -6,27 +6,28 @@
   <title>Login</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  
+
   <style>
     .icono-bolsas {
-        max-width: 60%;
-        height: auto;
+      max-width: 60%;
+      height: auto;
+    }
+    @media (max-width: 768px) {
+      .icono-bolsas {
+        max-width: 40%;
       }
-      @media (max-width: 768px) {
-        .icono-bolsas {
-          max-width: 40%;
-        }
-      }  
-      body {
-        background-color: #ffffff;
-        margin: 0;
-        padding: 0;
-        font-family: 'Poppins', sans-serif;
-      }
+    }  
+    body {
+      background-color: #ffffff;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
   </style>
 </head>
+
 <body>
   <div class="container-fluid vh-100 d-flex flex-column flex-md-row">
     <div class="d-flex justify-content-center align-items-center w-100 w-md-50">
@@ -35,16 +36,18 @@
     <div class="d-flex flex-column justify-content-center align-items-center text-white w-100 w-md-50 p-4" style="background-color: #4c6fc0;">
       <div class="text-center mb-3">
         <h2>Bienvenido</h2>
-        <p>No tienes cuenta? <a href="register.html" class="text-white text-decoration-underline">Registrarse</a></p>
+        <p>¿No tienes cuenta? <a href="register.html" class="text-white text-decoration-underline">Registrarse</a></p>
       </div>
-      <form class="w-100" style="max-width: 320px;" onsubmit="event.preventDefault(); window.location.href='index.html';">
+
+      <!-- Formulario de login -->
+      <form id="formLogin" class="w-100" style="max-width: 320px;">
         <div class="mb-3">
-          <label for="usuario" class="form-label">Correo</label>
-          <input type="email" class="form-control" id="usuario" required>
+          <label for="correo" class="form-label">Correo</label>
+          <input type="email" class="form-control" id="correo" required>
         </div>
         <div class="mb-3">
-          <label for="contrasena" class="form-label">Contraseña</label>
-          <input type="password" class="form-control" id="contrasena" required>
+          <label for="pass" class="form-label">Contraseña</label>
+          <input type="password" class="form-control" id="pass" required>
         </div>
         <div class="d-flex justify-content-between align-items-center mb-3">
           <div class="form-check">
@@ -53,9 +56,16 @@
           </div>
           <a href="#" class="text-white text-decoration-underline">¿Olvidaste tu contraseña?</a>
         </div>
-        <button type="submit" style="background-color: #7a96d5; color: #ffffff;" class="btn btn-stock w-100 fw-bold" href="index.html">Iniciar sesión</button>
+        <button type="submit" style="background-color: #7a96d5; color: #ffffff;" class="btn btn-stock w-100 fw-bold">
+          Iniciar sesión
+        </button>
       </form>
     </div>
   </div>
+
+  <script type="module">
+    import { login } from './controllers/auth_controllers.js';
+    document.getElementById('formLogin').addEventListener('submit', login);
+  </script>
 </body>
 </html>
