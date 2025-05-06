@@ -140,7 +140,7 @@
             
             <!-- Titulo H1 -->
             <br><br>
-            <h1 style="color: white; text-align: center; font-weight: bold;">Lista de comprass</h1>
+            <h1 style="color: white; text-align: center; font-weight: bold;">Lista de compras</h1>
             <br>
 
             <!-- Caja de texto -->
@@ -153,61 +153,56 @@
                 </div>
             </div>
 
-
-
-            
-            <!-- Modal Agregar Producto -->
-<div class="modal fade" id="modalAgregarProducto" tabindex="-1" aria-labelledby="modalAgregarProductoLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header bg-primary text-white">
-          <h5 class="modal-title" id="modalAgregarProductoLabel">Agregar producto</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-        </div>
-        <div class="modal-body">
-          <form id="formAgregarProducto">
-            <div class="mb-3">
-              <label for="nombreProducto" class="form-label">Nombre del producto</label>
-              <input type="text" class="form-control" id="nombreProducto" placeholder="Ej. Leche" required>
-            </div>
-            <div class="mb-3">
-              <label for="cantidadProducto" class="form-label">Cantidad</label>
-              <input type="number" class="form-control" id="cantidadProducto" placeholder="Ej. 2" min="1" required>
-            </div>
-            <div class="mb-3">
-              <label for="categoriaProducto" class="form-label">Categoría</label>
-              <select class="form-select" id="categoriaProducto" required>
-                <option selected disabled>Selecciona una categoría</option>
-                <option value="alimentos">Alimentos</option>
-                <option value="higiene">Productos de higiene</option>
-              </select>
-            </div>
-  
-            <div class="mb-3">
-                <div class="mb-3">
-                    <label class="form-label">Escanear código de barras</label>
-                    <video id="video" class="rounded shadow mb-2" style="width: 100%; height: auto;"></video>
-                    <div class="d-flex justify-content-center">
-                      <button type="button" id="scan-button" class="btn btn-outline-primary rounded-circle" style="width: 60px; height: 60px;">
-                        <i class="fa-solid fa-camera"></i>
-                      </button>
+                        <!-- Modal Agregar Producto -->
+            <div class="modal fade" id="modalAgregarProducto" tabindex="-1" aria-labelledby="modalAgregarProductoLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="modalAgregarProductoLabel">Agregar producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                     </div>
-                    <ul id="barcode-history" class="mt-3 list-group small"></ul>
-                  </div>                  
+                    <div class="modal-body">
+                    <form id="formAgregarProducto">
+                        <div class="mb-3">
+                            <label for="nombreProducto" class="form-label">Nombre del producto</label>
+                            <input type="text" class="form-control" id="nombreProducto" placeholder="Ej. Leche" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cantidadProducto" class="form-label">Cantidad</label>
+                            <input type="number" class="form-control" id="cantidadProducto" placeholder="Ej. 2" min="1" required>
+                        </div>
+                        <div class="mb-3">
+                        <label for="categoriaProducto" class="form-label">Categoría</label>
+                            <select class="form-select" id="categoriaProducto" required>
+                                <option selected disabled>Selecciona una categoría</option>
+                                <option value="alimentos">Alimentos</option>
+                                <option value="higiene">Productos de higiene</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                        <p>¿Tienes el producto a la mano?</p>
+                        <button type="button" id="iniciar-escaneo" class="btn btn-outline-secondary btn-sm mb-2">
+                            Activar escaneo de código de barras
+                        </button>
+                        <div id="escaneo-contenedor" class="d-none">
+                            <video id="video" class="rounded shadow mb-2" style="width: 100%; height: auto;"></video>
+                            <div class="d-flex justify-content-center">
+                            <button type="button" id="scan-button" class="btn btn-outline-primary rounded-circle" style="width: 60px; height: 60px;">
+                                <i class="fa-solid fa-camera"></i>
+                            </button>
+                            </div>
+                            <ul id="barcode-history" class="mt-3 list-group small"></ul>
+                        </div>
+                        </div>
+                    </form>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" form="formAgregarProducto">Guardar producto</button>
+                    </div>
+                </div>
+                </div>
             </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary" form="formAgregarProducto">Guardar producto</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-            
-
-
 
             <!-- Menu filtrar por categoría -->
             <div class="container px-3 mt-3">
@@ -295,70 +290,6 @@
             crossorigin="anonymous">
         </script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", async () => {
-  const video = document.getElementById("video");
-  const scanButton = document.getElementById("scan-button");
-  const historyEl = document.getElementById("barcode-history");
-  const scannedCodes = new Set();
-
-  scanButton.addEventListener("click", async (e) => {
-    e.preventDefault();
-
-    // Inicializa cámara si no está ya activa
-    if (!video.srcObject) {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "environment" },
-          audio: false
-        });
-        video.srcObject = stream;
-        await video.play();
-      } catch (err) {
-        console.error("Error al acceder a la cámara:", err);
-        alert("No se pudo acceder a la cámara.");
-        return;
-      }
-    }
-
-    // Captura imagen del video y escanea
-    const canvas = document.createElement("canvas");
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-    Quagga.decodeSingle({
-      src: canvas.toDataURL(),
-      numOfWorkers: 0,
-      inputStream: { size: 800 },
-      decoder: {
-        readers: ["code_128_reader", "ean_reader", "ean_8_reader", "upc_reader"]
-      },
-      locate: true
-    }, (result) => {
-      if (result && result.codeResult) {
-        const code = result.codeResult.code;
-        if (!scannedCodes.has(code)) {
-          scannedCodes.add(code);
-          const li = document.createElement("li");
-          li.className = "list-group-item";
-          li.textContent = `Código: ${code}`;
-          historyEl.appendChild(li);
-          console.log("✅ Código detectado:", code);
-        }
-      } else {
-        alert("No se detectó ningún código. Intenta enfocar mejor.");
-      }
-    });
-  });
-});
-</script>
-
-
         <script>
             document.addEventListener('DOMContentLoaded', function () {
             const filtroLinks = document.querySelectorAll('.dropdown-item[data-category]');
@@ -386,10 +317,75 @@ document.addEventListener("DOMContentLoaded", async () => {
                 });
             });
             });
-        </script>
-
+            </script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+            <script>
+            document.addEventListener("DOMContentLoaded", () => {
+              const video = document.getElementById("video");
+              const iniciarEscaneo = document.getElementById("iniciar-escaneo");
+              const escaneoContenedor = document.getElementById("escaneo-contenedor");
+              const scanButton = document.getElementById("scan-button");
+              const historyEl = document.getElementById("barcode-history");
+              const scannedCodes = new Set();
+              let streamActivo = false;
             
-
-
+              iniciarEscaneo.addEventListener("click", async () => {
+                escaneoContenedor.classList.remove("d-none");
+            
+                if (!streamActivo) {
+                  try {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                      video: { facingMode: "environment" },
+                      audio: false
+                    });
+                    video.srcObject = stream;
+                    await video.play();
+                    streamActivo = true;
+                  } catch (err) {
+                    console.error("Error al acceder a la cámara:", err);
+                    alert("No se pudo acceder a la cámara.");
+                  }
+                }
+              });
+            
+              scanButton.addEventListener("click", () => {
+                if (!streamActivo || video.videoWidth === 0) {
+                  alert("La cámara no está lista aún.");
+                  return;
+                }
+            
+                const canvas = document.createElement("canvas");
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+                Quagga.decodeSingle({
+                  src: canvas.toDataURL(),
+                  numOfWorkers: 0,
+                  inputStream: { size: 800 },
+                  decoder: {
+                    readers: ["code_128_reader", "ean_reader", "ean_8_reader", "upc_reader"]
+                  },
+                  locate: true
+                }, (result) => {
+                  if (result && result.codeResult) {
+                    const code = result.codeResult.code;
+                    if (!scannedCodes.has(code)) {
+                      scannedCodes.add(code);
+                      const li = document.createElement("li");
+                      li.className = "list-group-item";
+                      li.textContent = `Código: ${code}`;
+                      historyEl.appendChild(li);
+                      console.log("✅ Código detectado:", code);
+                    }
+                  } else {
+                    alert("No se detectó ningún código. Intenta enfocar mejor.");
+                  }
+                });
+              });
+            });
+        </script>
+  
     </body>
 </html>
