@@ -242,7 +242,8 @@
         </script>
         <script>
             document.addEventListener("DOMContentLoaded", function () {
-                const filterItems = document.querySelectorAll('.dropdown-item');
+                // Solo selecciona los items dentro del menú de categorías
+                const filterItems = document.querySelectorAll('#dropdownMenuButton + .dropdown-menu .dropdown-item');
                 const productItems = document.querySelectorAll('#listaProductos .list-group-item');
         
                 filterItems.forEach(item => {
@@ -252,7 +253,6 @@
         
                         productItems.forEach(product => {
                             const productCategory = product.getAttribute('data-category');
-        
                             if (category === '' || productCategory === category) {
                                 product.classList.remove('d-none');
                             } else {
@@ -262,7 +262,8 @@
                     });
                 });
             });
-        </script>        
+        </script>
+             
             
     </body>
 </html>
