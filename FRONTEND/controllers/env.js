@@ -1,5 +1,5 @@
 
-export const local_url = "https://proyectoweb-k36n.onrender.com";
+export const local_url = "https://proyectoweb-k36n.onrender.com/";
 
 // Validar sesión del usuario 
 export function validateLogin(redirectTo = "login.html") {
