@@ -2,7 +2,7 @@ const hostname = window.location.hostname;
 const isLocalhost = hostname === "localhost" || hostname === "127.0.0.1";
 
 // Usa la IP base detectada
-const baseFrontend = `${window.location.protocol}//${hostname}:5500/FRONTEND/views/`;
+const baseFrontend = `${window.location.protocol}//${hostname}:5501/FRONTEND/views/`;
 
 export const backend_url = isLocalhost
   ? "http://localhost:3000/"
