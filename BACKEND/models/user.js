@@ -16,16 +16,22 @@ const userSchema = new mongoose.Schema({
   pass: {
     type: String,
     required: true
-  }
+  },
+  colaboradores: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    }
+  ]
 });
 
-//validar si el correo ya existe en la base de datos
+// Validar si el correo ya existe en la base de datos
 userSchema.statics.emailExists = async function (correo) {
   const user = await this.findOne({ correo });
   return !!user;
 };
 
-//validar que la contraseña y su confirmación coincidan
+// Validar que la contraseña y su confirmación coincidan
 userSchema.statics.validatePassword = function (pass, confirmPass) {
   return pass === confirmPass;
 };
