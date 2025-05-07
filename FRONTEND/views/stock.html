@@ -493,17 +493,19 @@
                 }
               });
           
+              // Si escaneas desde cámara, mostrar el código en el campo de entrada y oculto
               const historyEl = document.getElementById("barcode-history");
               if (scanButton && historyEl) {
                 scanButton.addEventListener("click", () => {
                   const lastCode = historyEl.querySelector("li:last-child");
                   if (lastCode) {
-                    const code = lastCode.textContent.replace("Código: ", "");
+                    const code = lastCode.textContent.replace("Código: ", "").trim();
                     barcodeInput.value = code;
+                    inputManual.value = code;
                   }
                 });
               }
-          
+    
               const modalElement = document.getElementById("modalAgregarProducto");
               modalElement.addEventListener("hidden.bs.modal", () => {
                 form.reset();
