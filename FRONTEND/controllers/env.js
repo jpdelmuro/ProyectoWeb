@@ -1,9 +1,15 @@
+// Detectar si estamos en desarrollo local o en producción
+const isLocalhost = window.location.hostname === "localhost";
 
-// URL del backend en Render
-export const backend_url = "https://proyectoweb-k36n.onrender.com/";
+// Backend local o Render
+export const backend_url = isLocalhost
+  ? "http://localhost:3000/"
+  : "https://proyectoweb-k36n.onrender.com/";
 
-// URL del frontend en GitHub Pages
-export const frontend_url = "https://jpdelmuro.github.io/ProyectoWeb/FRONTEND/views/";
+// Frontend local o GitHub Pages
+export const frontend_url = isLocalhost
+  ? "http://localhost:5500/FRONTEND/views/" // cambia el puerto si usas otro
+  : "https://jpdelmuro.github.io/ProyectoWeb/FRONTEND/views/";
 
 // Validar sesión del usuario 
 export function validateLogin(redirectTo = "login.html") {
