@@ -105,7 +105,6 @@ exports.agregarColaborador = async (req, res) => {
     const usuarioPrincipal = await User.findById(id);
     if (!usuarioPrincipal) return res.status(404).json({ error: "Usuario principal no encontrado." });
 
-    // Evita duplicados
     if (usuarioPrincipal.colaboradores.includes(colaborador._id)) {
       return res.status(400).json({ error: "Colaborador ya añadido." });
     }
