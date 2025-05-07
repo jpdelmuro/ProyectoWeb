@@ -20,15 +20,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const user = parsedData.user;
 
-  if (!user || !user.nombre || !user.correo) {
+  if (!user || !user._id || !user.nombre || !user.correo) {
     alert("Sesión inválida. Inicia sesión nuevamente.");
     sessionStorage.clear();
     window.location.href = frontend_url + "login.html";
     return;
   }
-  
 
-  // Mostrar datos actuales
+  // Mostrar datos actuales en el formulario
   document.getElementById("editName").value = user.nombre || "";
   document.getElementById("editEmail").value = user.correo || "";
 
@@ -62,7 +61,14 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!res.ok) throw new Error("Error al actualizar usuario");
 
       const updated = await res.json();
-      sessionStorage.setItem("user", JSON.stringify({ token: parsedData.token, user: updated }));
+
+      sessionStorage.setItem("user", JSON.stringify({
+        token: parsedData.token,
+        user: {
+          ...updated,
+          pass: updatedData.pass  // conserva la nueva contraseña en sesión
+        }
+      }));
 
       const modal = new bootstrap.Modal(document.getElementById('modalGuardado'));
       modal.show();
@@ -88,13 +94,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!res.ok) throw new Error("Error al eliminar el usuario");
 
       sessionStorage.clear();
+      alert("Usuario eliminado correctamente");
+      window.location.href = frontend_url + 'login.html';
 
-      const modal = new bootstrap.Modal(document.getElementById('modalEliminado'));
-      modal.show();
-
-      setTimeout(() => {
-        window.location.href = frontend_url + 'login.html';
-      }, 2000);
     } catch (err) {
       alert(err.message);
     }
