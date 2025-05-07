@@ -1,4 +1,4 @@
-const User = require('../models/User');
+const User = require('../models/user');
 
 // POST /api/users - Registrar usuario
 exports.registerUser = async (req, res) => {
