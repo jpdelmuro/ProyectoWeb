@@ -227,18 +227,6 @@
                 <div class="mx-auto" style="max-width: 400px;">
                   <div class="productos-scroll">
                     <ul class="list-group" id="listaProductos">
-                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="Cereales">
-                        Pan <i class="fa-solid fa-check" style="color: green;"></i>
-                      </li>
-                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="Animal">
-                        Leche <i class="fa-solid fa-check" style="color: green;"></i>
-                      </li>
-                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="Animal">
-                        Huevos <i class="fa-solid fa-check" style="color: green;"></i>
-                      </li>
-                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="higiene">
-                        Jabón <i class="fa-solid fa-check" style="color: green;"></i>
-                      </li>
                     </ul>
                   </div>
                 </div>
@@ -274,64 +262,31 @@
         <script>
             document.addEventListener('DOMContentLoaded', function () {
             const filtroLinks = document.querySelectorAll('.dropdown-item[data-category]');
-            const productos = document.querySelectorAll('#listaProductos > li');
-            
+            const lista = document.getElementById('listaProductos');
+        
             filtroLinks.forEach(link => {
                 link.addEventListener('click', function (e) {
                 e.preventDefault();
-            
                 const categoriaSeleccionada = this.getAttribute('data-category');
-            
-                productos.forEach(producto => {
+                const productosActuales = lista.querySelectorAll('li');
+        
+                productosActuales.forEach(producto => {
                     const categoriaProducto = producto.getAttribute('data-category');
-            
                     if (categoriaSeleccionada === '' || categoriaProducto === categoriaSeleccionada) {
                     producto.classList.remove('d-none');
                     } else {
                     producto.classList.add('d-none');
                     }
                 });
-            
-                // Opcional: Cambiar texto del botón con la categoría seleccionada
+        
+                // Cambiar texto del botón
                 const botonFiltro = document.getElementById('dropdownMenuButton');
                 botonFiltro.textContent = this.textContent;
                 });
             });
             });
-            </script>
-
-            <!-- Formulario añadir -->
-            <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                  const form = document.getElementById("formAgregarProducto");
-                  const lista = document.getElementById("listaProductos");
-                
-                  form.addEventListener("submit", function (e) {
-                    e.preventDefault();
-                
-                    const nombre = document.getElementById("nombreProducto").value.trim();
-                    const cantidad = document.getElementById("cantidadProducto").value.trim();
-                    const categoria = document.getElementById("categoriaProducto").value;
-                
-                    if (nombre && cantidad && categoria) {
-                      const nuevoItem = document.createElement("li");
-                      nuevoItem.className = "list-group-item d-flex justify-content-between align-items-center";
-                      nuevoItem.setAttribute("data-category", categoria);
-                      nuevoItem.innerHTML = `
-                        ${nombre} (x${cantidad}) 
-                        <i class="fa-solid fa-check" style="color: green;"></i>
-                      `;
-                
-                      lista.appendChild(nuevoItem);
-                
-                      // Resetear formulario y cerrar modal
-                      form.reset();
-                      const modal = bootstrap.Modal.getInstance(document.getElementById('modalAgregarProducto'));
-                      modal.hide();
-                    }
-                  });
-                });
-            </script>
+        </script>
+  
 
             <!-- Script buscador en modal -->
             <script>
@@ -346,5 +301,109 @@
                   });
                 });
             </script>
+            <script type="module">
+                import { backend_url } from '../controllers/env.js';
+                import { getAuthHeaders } from '../controllers/auth_controllers.js';
+              
+                const form = document.getElementById("formAgregarProducto");
+                const lista = document.getElementById("listaProductos");
+              
+                // Función para renderizar un producto en la lista
+                function renderProducto(producto) {
+                  const item = document.createElement("li");
+                  item.className = "list-group-item d-flex justify-content-between align-items-center";
+                  item.setAttribute("data-category", producto.category);
+                  item.setAttribute("data-id", producto._id);
+                  item.innerHTML = `
+                    ${producto.name} (x${producto.quantity}) 
+                    <i class="fa-solid fa-xmark text-danger eliminar-producto" style="cursor: pointer;" data-id="${producto._id}"></i>
+                  `;
+                  lista.appendChild(item);
+                }
+              
+                // Cargar productos al iniciar la página
+                async function cargarProductos() {
+                  try {
+                    const res = await fetch(`${backend_url}api/productos`, {
+                      method: 'GET',
+                      headers: getAuthHeaders()
+                    });
+              
+                    const productos = await res.json();
+              
+                    if (!Array.isArray(productos)) throw new Error('Respuesta inválida');
+              
+                    productos.forEach(p => renderProducto(p));
+                  } catch (err) {
+                    console.error("❌ Error al cargar productos:", err.message);
+                  }
+                }
+              
+                // Enviar nuevo producto
+                form.addEventListener("submit", async function (e) {
+                  e.preventDefault();
+              
+                  const nombre = document.getElementById("nombreProducto").value.trim();
+                  const cantidad = parseInt(document.getElementById("cantidadProducto").value.trim());
+                  const categoria = document.getElementById("categoriaProducto").value;
+              
+                  if (nombre && cantidad && categoria) {
+                    try {
+                      const res = await fetch(`${backend_url}api/productos`, {
+                        method: 'POST',
+                        headers: getAuthHeaders(),
+                        body: JSON.stringify({
+                          name: nombre,
+                          quantity: cantidad,
+                          category: categoria,
+                          type: 'shoppingList'
+                        })
+                      });
+              
+                      const nuevoProducto = await res.json();
+              
+                      if (!res.ok) throw new Error(nuevoProducto.message || 'Error al guardar');
+              
+                      renderProducto(nuevoProducto);
+              
+                      // Limpiar formulario y cerrar modal
+                      form.reset();
+                      const modal = bootstrap.Modal.getInstance(document.getElementById('modalAgregarProducto'));
+                      modal.hide();
+                    } catch (err) {
+                      alert(err.message);
+                    }
+                  }
+                });
+              
+                // Delegación para manejar clics en ❌
+                lista.addEventListener('click', async function (e) {
+                  if (e.target.classList.contains('eliminar-producto')) {
+                    const id = e.target.getAttribute('data-id');
+              
+                    try {
+                      const res = await fetch(`${backend_url}api/productos/${id}`, {
+                        method: 'DELETE',
+                        headers: getAuthHeaders()
+                      });
+              
+                      const data = await res.json();
+                      if (!res.ok) throw new Error(data.message || 'Error al eliminar');
+              
+                      // Eliminar del DOM
+                      const li = e.target.closest('li');
+                      if (li) li.remove();
+                    } catch (err) {
+                      alert("❌ No se pudo eliminar: " + err.message);
+                    }
+                  }
+                });
+              
+                // Ejecutar carga al iniciar
+                document.addEventListener('DOMContentLoaded', cargarProductos);
+              </script>              
+
+              
+              
     </body>
 </html>

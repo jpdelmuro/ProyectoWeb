@@ -14,7 +14,7 @@ export function toggleForms() {
   }
 }
 
-// Login con MongoDB
+// Login con MongoDB y JWT
 export function login(event) {
   event.preventDefault();
 
@@ -30,8 +30,10 @@ export function login(event) {
       if (!response.ok) throw new Error("Correo y/o contraseña incorrectos");
       return response.json();
     })
-    .then(user => {
-      sessionStorage.setItem('user', JSON.stringify(user));
+    .then(data => {
+      console.log("🎯 Respuesta del backend:", data); // <-- Debug
+      sessionStorage.setItem('token', data.token);
+      sessionStorage.setItem('user', JSON.stringify(data.user));
       window.location.href = frontend_url + 'index.html';
     })
     .catch(err => {
@@ -150,3 +152,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+// Exporta headers con token para usar en cualquier fetch autenticado
+export function getAuthHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': sessionStorage.getItem('token')
+  };
+}

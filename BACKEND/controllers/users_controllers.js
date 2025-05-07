@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 // POST /api/users - Registrar usuario
@@ -22,7 +23,7 @@ exports.registerUser = async (req, res) => {
   }
 };
 
-// POST /api/users/login - Login simple
+// POST /api/users/login - Login con JWT
 exports.login = async (req, res) => {
   const { correo, pass } = req.body;
 
@@ -30,7 +31,21 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ correo, pass });
     if (!user) return res.status(401).json({ error: 'Credenciales inválidas' });
 
-    res.json(user); 
+    // Crear token JWT
+    const token = jwt.sign(
+      { id: user._id, correo: user.correo },
+      process.env.JWT_SECRET,
+      { expiresIn: '2h' }
+    );
+
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        nombre: user.nombre,
+        correo: user.correo
+      }
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
