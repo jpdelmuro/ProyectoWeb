@@ -292,33 +292,33 @@
         </script>
         <!--  Ordenar productos -->
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const filtroLinks = document.querySelectorAll('.dropdown-item[data-category]');
-                const productos = document.querySelectorAll('#listaProductos > li');
-            
-                filtroLinks.forEach(link => {
-                link.addEventListener('click', function (e) {
-                    e.preventDefault();
-            
-                    const categoriaSeleccionada = this.getAttribute('data-category');
-            
-                    productos.forEach(producto => {
-                    const categoriaProducto = producto.getAttribute('data-category');
-            
-                    if (categoriaSeleccionada === '' || categoriaProducto === categoriaSeleccionada) {
-                        producto.classList.remove('d-none');
-                    } else {
-                        producto.classList.add('d-none');
-                    }
-                    });
-            
-                    // Opcional: Cambiar texto del botón con la categoría seleccionada
-                    const botonFiltro = document.getElementById('dropdownMenuButton');
-                    botonFiltro.textContent = this.textContent;
+          document.addEventListener('DOMContentLoaded', function () {
+            const filtroLinks = document.querySelectorAll('.dropdown-item[data-category]');
+            const lista = document.getElementById('listaProductos');
+        
+            filtroLinks.forEach(link => {
+              link.addEventListener('click', function (e) {
+                e.preventDefault();
+        
+                const categoriaSeleccionada = this.getAttribute('data-category');
+                const productos = lista.querySelectorAll('li');
+        
+                productos.forEach(producto => {
+                  const categoriaProducto = producto.getAttribute('data-category');
+        
+                  if (categoriaSeleccionada === '' || categoriaProducto === categoriaSeleccionada) {
+                    producto.classList.remove('d-none');
+                  } else {
+                    producto.classList.add('d-none');
+                  }
                 });
-                });
+        
+                const botonFiltro = document.getElementById('dropdownMenuButton');
+                botonFiltro.textContent = this.textContent;
+              });
             });
-        </script>
+          });
+        </script>        
         <!-- Script para codigo de barras -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
         <script>
