@@ -193,22 +193,30 @@
                         </div>
             
                         <div class="mb-3">
-                        <p>¿Tienes el producto a la mano?</p>
-                        <button type="button" id="iniciar-escaneo" class="btn btn-outline-secondary btn-sm mb-2">
-                            Activar escaneo de código de barras
-                        </button>
-            
-                        <div id="escaneo-contenedor" class="d-none">
+                          <p>¿Tienes el producto a la mano?</p>
+                          <button type="button" id="iniciar-escaneo" class="btn btn-outline-secondary btn-sm mb-2">
+                              Activar escaneo de código de barras
+                          </button>
+              
+                          <div id="escaneo-contenedor" class="d-none">
                             <video id="video" class="rounded shadow mb-2" style="width: 100%; height: auto;"></video>
-                            <div class="d-flex justify-content-center">
-                            <button type="button" id="scan-button" class="btn btn-outline-primary rounded-circle" style="width: 60px; height: 60px;">
-                                <i class="fa-solid fa-camera"></i>
-                            </button>
+                            <div class="d-flex justify-content-center flex-column align-items-center">
+                                <button type="button" id="scan-button" class="btn btn-outline-primary rounded-circle mb-2" style="width: 60px; height: 60px;">
+                                    <i class="fa-solid fa-camera"></i>
+                                </button>
+                        
+                                <!-- NUEVO input visible para código escaneado/manual -->
+                                <input type="text" id="inputManual" class="form-control form-control-sm mb-2" placeholder="Ingresa código de barras manual" style="max-width: 300px;">
+                        
+                                <!-- Botón buscar por código -->
+                                <button type="button" id="buscarPorCodigo" class="btn btn-warning btn-sm mb-2">Buscar por código</button>
                             </div>
+                        
                             <ul id="barcode-history" class="mt-3 list-group small"></ul>
                         </div>
+                      
                         </div>
-                        <input type="text" class="form-control" id="barcodeProducto" placeholder="Código de barras" required>
+                        <input type="hidden" id="barcodeProducto">
                     </form>
                     </div>
                     <div class="modal-footer">
@@ -284,33 +292,33 @@
         </script>
         <!--  Ordenar productos -->
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const filtroLinks = document.querySelectorAll('.dropdown-item[data-category]');
-                const productos = document.querySelectorAll('#listaProductos > li');
-            
-                filtroLinks.forEach(link => {
-                link.addEventListener('click', function (e) {
-                    e.preventDefault();
-            
-                    const categoriaSeleccionada = this.getAttribute('data-category');
-            
-                    productos.forEach(producto => {
-                    const categoriaProducto = producto.getAttribute('data-category');
-            
-                    if (categoriaSeleccionada === '' || categoriaProducto === categoriaSeleccionada) {
-                        producto.classList.remove('d-none');
-                    } else {
-                        producto.classList.add('d-none');
-                    }
-                    });
-            
-                    // Opcional: Cambiar texto del botón con la categoría seleccionada
-                    const botonFiltro = document.getElementById('dropdownMenuButton');
-                    botonFiltro.textContent = this.textContent;
+          document.addEventListener('DOMContentLoaded', function () {
+            const filtroLinks = document.querySelectorAll('.dropdown-item[data-category]');
+            const lista = document.getElementById('listaProductos');
+        
+            filtroLinks.forEach(link => {
+              link.addEventListener('click', function (e) {
+                e.preventDefault();
+        
+                const categoriaSeleccionada = this.getAttribute('data-category');
+                const productos = lista.querySelectorAll('li');
+        
+                productos.forEach(producto => {
+                  const categoriaProducto = producto.getAttribute('data-category');
+        
+                  if (categoriaSeleccionada === '' || categoriaProducto === categoriaSeleccionada) {
+                    producto.classList.remove('d-none');
+                  } else {
+                    producto.classList.add('d-none');
+                  }
                 });
-                });
+        
+                const botonFiltro = document.getElementById('dropdownMenuButton');
+                botonFiltro.textContent = this.textContent;
+              });
             });
-        </script>
+          });
+        </script>        
         <!-- Script para codigo de barras -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
         <script>
@@ -361,16 +369,23 @@
             },
             locate: true
             }, (result) => {
-            if (result && result.codeResult) {
+              if (result && result.codeResult) {
                 const code = result.codeResult.code;
-                if (!scannedCodes.has(code)) {
-                scannedCodes.add(code);
-                const li = document.createElement("li");
-                li.className = "list-group-item";
-                li.textContent = `Código: ${code}`;
-                historyEl.appendChild(li);
                 console.log("✅ Código detectado:", code);
+
+                const inputManual = document.getElementById("inputManual");
+                const barcodeHidden = document.getElementById("barcodeProducto");
+
+                if (inputManual) inputManual.value = code;
+                if (barcodeHidden) barcodeHidden.value = code;
+
+                // Marcar como escaneado (opcional para evitar escaneos duplicados)
+                if (!scannedCodes.has(code)) {
+                    scannedCodes.add(code);
                 }
+
+                // Si quieres ocultar el historial, puedes limpiar esto:
+                historyEl.innerHTML = "";
             } else {
                 alert("No se detectó ningún código. Intenta enfocar mejor.");
             }
@@ -409,12 +424,11 @@
               const barcodeInput = document.getElementById("barcodeProducto");
               const scanButton = document.getElementById("scan-button");
           
-              const inputManual = document.createElement("input");
-              inputManual.type = "text";
-              inputManual.placeholder = "Ingresa código de barras manual";
-              inputManual.className = "form-control form-control-sm mb-2";
+              const inputManual = document.getElementById("inputManual");
+
           
-              const buscarBtn = document.createElement("button");
+              const buscarBtn = document.getElementById("buscarPorCodigo");
+
               buscarBtn.className = "btn btn-warning btn-sm mb-2";
               buscarBtn.innerText = "Buscar por código";
           
@@ -493,19 +507,17 @@
                 }
               });
           
-              // Si escaneas desde cámara, mostrar el código en el campo de entrada y oculto
               const historyEl = document.getElementById("barcode-history");
               if (scanButton && historyEl) {
                 scanButton.addEventListener("click", () => {
                   const lastCode = historyEl.querySelector("li:last-child");
                   if (lastCode) {
-                    const code = lastCode.textContent.replace("Código: ", "").trim();
+                    const code = lastCode.textContent.replace("Código: ", "");
                     barcodeInput.value = code;
-                    inputManual.value = code;
                   }
                 });
               }
-    
+          
               const modalElement = document.getElementById("modalAgregarProducto");
               modalElement.addEventListener("hidden.bs.modal", () => {
                 form.reset();
