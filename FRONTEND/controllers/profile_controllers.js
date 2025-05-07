@@ -20,6 +20,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const user = parsedData.user;
 
+  if (!user || !user.nombre || !user.correo) {
+    alert("Sesión inválida. Inicia sesión nuevamente.");
+    sessionStorage.clear();
+    window.location.href = frontend_url + "login.html";
+    return;
+  }
+  
+
   // Mostrar datos actuales
   document.getElementById("editName").value = user.nombre || "";
   document.getElementById("editEmail").value = user.correo || "";
