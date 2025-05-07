@@ -262,31 +262,31 @@
         <script>
             document.addEventListener('DOMContentLoaded', function () {
             const filtroLinks = document.querySelectorAll('.dropdown-item[data-category]');
-            const productos = document.querySelectorAll('#listaProductos > li');
-            
+            const lista = document.getElementById('listaProductos');
+        
             filtroLinks.forEach(link => {
                 link.addEventListener('click', function (e) {
                 e.preventDefault();
-            
                 const categoriaSeleccionada = this.getAttribute('data-category');
-            
-                productos.forEach(producto => {
+                const productosActuales = lista.querySelectorAll('li');
+        
+                productosActuales.forEach(producto => {
                     const categoriaProducto = producto.getAttribute('data-category');
-            
                     if (categoriaSeleccionada === '' || categoriaProducto === categoriaSeleccionada) {
                     producto.classList.remove('d-none');
                     } else {
                     producto.classList.add('d-none');
                     }
                 });
-            
-                // Opcional: Cambiar texto del botón con la categoría seleccionada
+        
+                // Cambiar texto del botón
                 const botonFiltro = document.getElementById('dropdownMenuButton');
                 botonFiltro.textContent = this.textContent;
                 });
             });
             });
-            </script>
+        </script>
+  
 
             <!-- Script buscador en modal -->
             <script>
