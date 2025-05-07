@@ -8,4 +8,7 @@ router.get('/', auth, productController.getProductos);
 router.post('/', auth, productController.addProducto);
 router.delete('/:id', auth, productController.deleteProducto);
 
+router.get('/barcode/:codigo', productController.getByBarcode);
+
+
 module.exports = router;

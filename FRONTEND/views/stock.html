@@ -132,10 +132,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <!--                     CAMBIAR ENLACE                                         -->
-                            <!--                     CAMBIAR ENLACE                                         -->
-                            <!--                     CAMBIAR ENLACE                                         -->
-                            <a href="/ProyectoWeb/FRONTEND/views/login.html" class="btn btn-danger">Cerrar sesión</a>
+                            <a href="login.html" class="btn btn-danger">Cerrar sesión</a>
                         </div>
                     </div>
                 </div>
@@ -211,6 +208,7 @@
                             <ul id="barcode-history" class="mt-3 list-group small"></ul>
                         </div>
                         </div>
+                        <input type="hidden" id="barcodeProducto">
                     </form>
                     </div>
                     <div class="modal-footer">
@@ -254,28 +252,6 @@
                 <div class="mx-auto" style="max-width: 400px;">
                   <div class="productos-scroll">
                     <ul class="list-group" id="listaProductos">
-                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="Cereales">
-                        Pan
-                        <span>
-                            <i class="fa-solid fa-pen text-primary me-3" style="cursor: pointer;"></i>
-                            <i class="fa-solid fa-xmark text-danger" style="cursor: pointer;"></i>
-                        </span>
-                      </li>
-                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="Animal">
-                        Leche
-                        <span>
-                            <i class="fa-solid fa-pen text-primary me-3" style="cursor: pointer;"></i>
-                            <i class="fa-solid fa-xmark text-danger" style="cursor: pointer;"></i>
-                        </span>
-                      </li>
-                      <li class="list-group-item d-flex justify-content-between align-items-center" data-category="Animal">
-                        Huevos
-                        <span>
-                            <i class="fa-solid fa-pen text-primary me-3" style="cursor: pointer;"></i>
-                            <i class="fa-solid fa-xmark text-danger" style="cursor: pointer;"></i>
-                        </span>
-                      </li>
-            
                     </ul>
                   </div>
                 </div>
@@ -401,6 +377,10 @@
             });
         });
         });
+
+        
+
+
         </script>  
         <!-- Script buscador en modal --> 
         <script>
@@ -414,6 +394,160 @@
                 inputNombre.value = texto;
               });
             });
-            </script>
+        </script>
+        <script type="module">
+            import { backend_url } from '../controllers/env.js';
+            import { getAuthHeaders } from '../controllers/auth_controllers.js';
+          
+            document.addEventListener("DOMContentLoaded", () => {
+              const form = document.getElementById("formAgregarProducto");
+              const lista = document.getElementById("listaProductos");
+              const nombreInput = document.getElementById("nombreProducto");
+              const cantidadInput = document.getElementById("cantidadProducto");
+              const precioInput = document.getElementById("precioProducto");
+              const categoriaSelect = document.getElementById("categoriaProducto");
+              const barcodeInput = document.getElementById("barcodeProducto");
+              const scanButton = document.getElementById("scan-button");
+          
+              const inputManual = document.createElement("input");
+              inputManual.type = "text";
+              inputManual.placeholder = "Ingresa código de barras manual";
+              inputManual.className = "form-control form-control-sm mb-2";
+          
+              const buscarBtn = document.createElement("button");
+              buscarBtn.className = "btn btn-warning btn-sm mb-2";
+              buscarBtn.innerText = "Buscar por código";
+          
+              buscarBtn.addEventListener("click", async () => {
+                const codigoFalso = inputManual.value.trim();
+                if (!codigoFalso) return alert("Ingresa un código primero");
+          
+                try {
+                  const res = await fetch(`${backend_url}api/productos/barcode/${codigoFalso}`);
+                  const data = await res.json();
+                  if (!res.ok) throw new Error(data.message || "No encontrado");
+          
+                  nombreInput.value = data.name;
+                  precioInput.value = data.price;
+                  categoriaSelect.value = data.category;
+                  barcodeInput.value = codigoFalso;
+          
+                  alert("✅ Producto autocompletado");
+                } catch (err) {
+                  alert("❌ No se encontró el código: " + err.message);
+                }
+              });
+          
+              if (scanButton?.parentElement) {
+                scanButton.parentElement.appendChild(inputManual);
+                scanButton.parentElement.appendChild(buscarBtn);
+              }
+          
+              form.addEventListener("submit", async function (e) {
+                e.preventDefault();
+          
+                const nombre = nombreInput.value.trim();
+                const cantidad = parseInt(cantidadInput.value.trim());
+                const precio = precioInput.value.trim();
+                const categoria = categoriaSelect.value;
+                const codigoManual = inputManual.value.trim();
+          
+                if (!barcodeInput.value && codigoManual) {
+                  barcodeInput.value = codigoManual;
+                }
+          
+                const barcode = barcodeInput.value.trim();
+          
+                if (nombre && cantidad && categoria && precio) {
+                  try {
+                    const res = await fetch(`${backend_url}api/productos`, {
+                      method: 'POST',
+                      headers: getAuthHeaders(),
+                      body: JSON.stringify({
+                        name: nombre,
+                        quantity: cantidad,
+                        category: categoria,
+                        type: 'inventory',
+                        price: precio,
+                        barcode: barcode
+                      })
+                    });
+          
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.message || 'Error al guardar');
+          
+                    alert("✅ Producto guardado con éxito");
+                    form.reset();
+                    barcodeInput.value = "";
+                    inputManual.value = "";
+          
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('modalAgregarProducto'));
+                    modal.hide();
+          
+                    renderProducto(data);
+                  } catch (err) {
+                    alert("❌ " + err.message);
+                  }
+                } else {
+                  alert("Completa todos los campos obligatorios");
+                }
+              });
+          
+              const historyEl = document.getElementById("barcode-history");
+              if (scanButton && historyEl) {
+                scanButton.addEventListener("click", () => {
+                  const lastCode = historyEl.querySelector("li:last-child");
+                  if (lastCode) {
+                    const code = lastCode.textContent.replace("Código: ", "");
+                    barcodeInput.value = code;
+                  }
+                });
+              }
+          
+              const modalElement = document.getElementById("modalAgregarProducto");
+              modalElement.addEventListener("hidden.bs.modal", () => {
+                form.reset();
+                barcodeInput.value = "";
+                inputManual.value = "";
+              });
+          
+              function renderProducto(producto) {
+                if (producto.type !== 'inventory') return;
+          
+                const item = document.createElement("li");
+                item.className = "list-group-item d-flex justify-content-between align-items-center";
+                item.setAttribute("data-category", producto.category);
+                item.innerHTML = `
+                  ${producto.name} (x${producto.quantity}) - ${producto.price || "$0"}
+                  <span>
+                    <i class="fa-solid fa-pen text-primary me-3" style="cursor: pointer;"></i>
+                    <i class="fa-solid fa-xmark text-danger eliminar-producto" style="cursor: pointer;" data-id="${producto._id}"></i>
+                  </span>
+                `;
+                lista.appendChild(item);
+              }
+          
+              async function cargarInventario() {
+                try {
+                  const res = await fetch(`${backend_url}api/productos`, {
+                    method: 'GET',
+                    headers: getAuthHeaders()
+                  });
+                  const productos = await res.json();
+                  productos.filter(p => p.type === 'inventory').forEach(renderProducto);
+                } catch (err) {
+                  console.error("❌ Error al cargar inventario:", err.message);
+                }
+              }
+          
+              cargarInventario();
+            });
+        </script>
+          
+            
+            
+               
+            
+            
     </body>
 </html>

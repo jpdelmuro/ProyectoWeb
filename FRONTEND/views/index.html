@@ -301,6 +301,7 @@
                   });
                 });
             </script>
+            
             <script type="module">
                 import { backend_url } from '../controllers/env.js';
                 import { getAuthHeaders } from '../controllers/auth_controllers.js';
@@ -333,7 +334,9 @@
               
                     if (!Array.isArray(productos)) throw new Error('Respuesta inválida');
               
-                    productos.forEach(p => renderProducto(p));
+                    const filtrados = productos.filter(p => p.type === 'shoppingList');
+                    filtrados.forEach(renderProducto);
+
                   } catch (err) {
                     console.error("❌ Error al cargar productos:", err.message);
                   }
