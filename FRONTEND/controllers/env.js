@@ -1,8 +1,7 @@
 const hostname = window.location.hostname;
 const isLocalhost = hostname === "localhost" || hostname === "127.0.0.1";
 
-// Usa la IP base detectada
-const baseFrontend = `${window.location.protocol}//${hostname}:5501/FRONTEND/views/`;
+const baseFrontend = `${window.location.origin}/FRONTEND/views/`;
 
 export const backend_url = isLocalhost
   ? "http://localhost:3000/"
@@ -11,9 +10,6 @@ export const backend_url = isLocalhost
 export const frontend_url = isLocalhost
   ? baseFrontend
   : "https://jpdelmuro.github.io/ProyectoWeb/FRONTEND/views/";
-
-
-
 
 // Validar sesión del usuario 
 export function validateLogin(redirectTo = "login.html") {
