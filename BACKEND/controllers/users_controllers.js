@@ -95,25 +95,25 @@ exports.deleteUser = async (req, res) => {
 
 // POST /api/users/:id/colaboradores
 exports.agregarColaborador = async (req, res) => {
+  const { id } = req.params;
   const { correoColaborador } = req.body;
-  const ownerId = req.params.id;
 
   try {
-    const owner = await User.findById(ownerId);
-    if (!owner) return res.status(404).json({ error: "Usuario principal no encontrado." });
-
     const colaborador = await User.findOne({ correo: correoColaborador });
     if (!colaborador) return res.status(404).json({ error: "Colaborador no encontrado." });
 
-    // Ya agregado
-    if (owner.colaboradores.includes(colaborador._id)) {
-      return res.status(400).json({ error: "Este colaborador ya está vinculado." });
+    const usuarioPrincipal = await User.findById(id);
+    if (!usuarioPrincipal) return res.status(404).json({ error: "Usuario principal no encontrado." });
+
+    // Evita duplicados
+    if (usuarioPrincipal.colaboradores.includes(colaborador._id)) {
+      return res.status(400).json({ error: "Colaborador ya añadido." });
     }
 
-    owner.colaboradores.push(colaborador._id);
-    await owner.save();
+    usuarioPrincipal.colaboradores.push(colaborador._id);
+    await usuarioPrincipal.save();
 
-    res.json({ message: "Colaborador agregado exitosamente", colaborador });
+    res.status(200).json({ message: "Colaborador añadido correctamente." });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
