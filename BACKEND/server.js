@@ -5,6 +5,8 @@ const path = require('path');
 require('dotenv').config();
 
 const userRoutes = require('./routes/users');
+const productRoutes = require('./routes/products');
+
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -19,6 +21,8 @@ app.use('/controllers', express.static(path.join(__dirname, '../FRONTEND/control
 
 // API routes
 app.use('/api/users', userRoutes);
+app.use('/api/productos', productRoutes);
+
 
 // Conexión a MongoDB
 mongoose.connect(process.env.MONGO_URI, {
