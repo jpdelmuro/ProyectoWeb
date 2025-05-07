@@ -1,31 +1,30 @@
 import { backend_url, frontend_url } from '../controllers/env.js';
 
 document.addEventListener("DOMContentLoaded", () => {
-  const rawUser = sessionStorage.getItem("user");
+  const sessionData = sessionStorage.getItem("user");
 
-  // Validar sesión y formato
-  if (!rawUser || rawUser === 'undefined') {
-    sessionStorage.clear();
-    alert("Tu sesión ha expirado. Inicia sesión de nuevo.");
+  if (!sessionData) {
     window.location.href = frontend_url + "login.html";
     return;
   }
 
-  let user;
+  let parsedData;
   try {
-    user = JSON.parse(rawUser);
-  } catch (err) {
+    parsedData = JSON.parse(sessionData);
+  } catch (error) {
+    console.error("Error al parsear sessionStorage user:", error);
     sessionStorage.clear();
-    alert("Error de sesión. Inicia sesión de nuevo.");
     window.location.href = frontend_url + "login.html";
     return;
   }
 
-  // Mostrar los datos actuales
+  const user = parsedData.user;
+
+  // Mostrar datos actuales
   document.getElementById("editName").value = user.nombre || "";
   document.getElementById("editEmail").value = user.correo || "";
 
-  // Escuchar formulario
+  // Guardar cambios
   document.querySelector("form").addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -34,28 +33,28 @@ document.addEventListener("DOMContentLoaded", () => {
     const currentPwd = document.getElementById("currentPwd").value;
     const newPwd = document.getElementById("newPwd").value;
 
-    if (!currentPwd || currentPwd !== user.pass) {
+    if (!currentPwd || currentPwd !== parsedData.user.pass) {
       alert("Debes ingresar correctamente tu contraseña actual para guardar cambios.");
       return;
     }
 
-    const body = {
+    const updatedData = {
       nombre,
       correo,
-      pass: newPwd ? newPwd : user.pass
+      pass: newPwd ? newPwd : parsedData.user.pass,
     };
 
     try {
       const res = await fetch(`${backend_url}api/users/${user._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
+        body: JSON.stringify(updatedData)
       });
 
       if (!res.ok) throw new Error("Error al actualizar usuario");
 
       const updated = await res.json();
-      sessionStorage.setItem("user", JSON.stringify(updated));
+      sessionStorage.setItem("user", JSON.stringify({ token: parsedData.token, user: updated }));
 
       const modal = new bootstrap.Modal(document.getElementById('modalGuardado'));
       modal.show();
@@ -68,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
   window.eliminarUsuario = async () => {
     const currentPwd = document.getElementById("currentPwd").value;
 
-    if (!currentPwd || currentPwd !== user.pass) {
+    if (!currentPwd || currentPwd !== parsedData.user.pass) {
       alert("Debes ingresar correctamente tu contraseña actual para eliminar el usuario.");
       return;
     }
