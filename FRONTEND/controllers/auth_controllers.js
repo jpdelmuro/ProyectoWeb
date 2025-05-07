@@ -1,4 +1,4 @@
-import { local_url } from './env.js';
+import { backend_url, frontend_url } from '../controllers/env.js';
 
 // Cambia entre formularios de login y registro
 export function toggleForms() {
@@ -21,7 +21,7 @@ export function login(event) {
   const correo = document.getElementById('correo').value;
   const pass = document.getElementById('pass').value;
 
-  fetch(`${local_url}api/users/login`, {
+  fetch(`${backend_url}api/users/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ correo, pass })
@@ -32,7 +32,7 @@ export function login(event) {
     })
     .then(user => {
       sessionStorage.setItem('user', JSON.stringify(user));
-      window.location.href = local_url + 'index.html';
+      window.location.href = frontend_url + 'index.html';
     })
     .catch(err => {
       alert(err.message);
@@ -48,7 +48,7 @@ export function register(event) {
   const pass = document.getElementById('pass').value;
   const confirmPass = document.getElementById('confirmPass').value;
 
-  fetch(`${local_url}api/users`, {
+  fetch(`${backend_url}api/users`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ nombre, correo, pass, confirmPass })
@@ -59,7 +59,7 @@ export function register(event) {
     })
     .then(user => {
       sessionStorage.setItem('user', JSON.stringify(user));
-      window.location.href = local_url + 'index.html';
+      window.location.href = frontend_url + 'index.html';
     })
     .catch(err => {
       alert("Error: " + err.message);
@@ -69,7 +69,7 @@ export function register(event) {
 // Logout
 export function logout() {
   sessionStorage.clear();
-  window.location.href = local_url + 'login.html';
+  window.location.href = frontend_url + 'login.html';
 }
 
 // Mostrar datos en modal de perfil
@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const pass = document.getElementById('editPwd').value;
 
       try {
-        const res = await fetch(`${local_url}api/users/${user._id}`, {
+        const res = await fetch(`${backend_url}api/users/${user._id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnDelete) {
     btnDelete.addEventListener('click', async () => {
       try {
-        const res = await fetch(`${local_url}api/users/${user._id}`, {
+        const res = await fetch(`${backend_url}api/users/${user._id}`, {
           method: 'DELETE'
         });
 
@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         sessionStorage.clear();
         alert("Usuario eliminado");
-        window.location.href = local_url + 'login.html';
+        window.location.href = frontend_url + 'login.html';
       } catch (err) {
         alert(err.message);
       }
