@@ -1,11 +1,13 @@
 import { backend_url, frontend_url } from '../controllers/env.js';
 
 document.addEventListener("DOMContentLoaded", () => {
-  const user = JSON.parse(sessionStorage.getItem("user"));
-  if (!user) {
+  const userString = sessionStorage.getItem("user");
+  if (!userString || userString === 'undefined') {
     window.location.href = frontend_url + "login.html";
     return;
   }
+
+  const user = JSON.parse(userString);
 
   // Mostrar datos actuales
   document.getElementById("editName").value = user.nombre;
@@ -28,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const body = {
       nombre,
       correo,
-      pass: newPwd ? newPwd : user.pass // Si hay nueva, usa esa
+      pass: newPwd ? newPwd : user.pass
     };
 
     try {
@@ -43,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!res.ok) throw new Error("Error al actualizar usuario");
 
       const updated = await res.json();
-      sessionStorage.setItem("user", JSON.stringify(updated));
+      sessionStorage.setItem("user", JSON.stringify(updated)); // ✅ actualizar en sessionStorage
 
       const modal = new bootstrap.Modal(document.getElementById('modalGuardado'));
       modal.show();

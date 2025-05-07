@@ -14,7 +14,8 @@ export function toggleForms() {
   }
 }
 
-// Login con MongoDB y JWT
+
+// LOGIN: Guarda bien el usuario en sessionStorage
 export function login(event) {
   event.preventDefault();
 
@@ -30,16 +31,15 @@ export function login(event) {
       if (!response.ok) throw new Error("Correo y/o contraseña incorrectos");
       return response.json();
     })
-    .then(data => {
-      console.log("🎯 Respuesta del backend:", data); // <-- Debug
-      sessionStorage.setItem('token', data.token);
-      sessionStorage.setItem('user', JSON.stringify(data.user));
+    .then(user => {
+      sessionStorage.setItem('user', JSON.stringify(user)); // ✅ CORRECTO
       window.location.href = frontend_url + 'index.html';
     })
     .catch(err => {
       alert(err.message);
     });
 }
+
 
 // Registro con MongoDB
 export function register(event) {
