@@ -14,7 +14,8 @@ export function toggleForms() {
   }
 }
 
-// LOGIN corregido
+
+// LOGIN: Guarda bien el usuario en sessionStorage
 export function login(event) {
   event.preventDefault();
 
@@ -30,11 +31,8 @@ export function login(event) {
       if (!response.ok) throw new Error("Correo y/o contraseña incorrectos");
       return response.json();
     })
-    .then(data => {
-      sessionStorage.setItem("user", JSON.stringify({
-        token: data.token,
-        user: data.user
-      }));
+    .then(user => {
+      sessionStorage.setItem("user", JSON.stringify(user));
       window.location.href = frontend_url + 'index.html';
     })
     .catch(err => {
@@ -42,7 +40,8 @@ export function login(event) {
     });
 }
 
-// Registro corregido
+
+// Registro con MongoDB
 export function register(event) {
   event.preventDefault();
 
@@ -60,11 +59,8 @@ export function register(event) {
       if (!response.ok) return response.json().then(err => { throw new Error(err.error); });
       return response.json();
     })
-    .then(data => {
-      sessionStorage.setItem("user", JSON.stringify({
-        token: data.token,
-        user: data.user
-      }));
+    .then(user => {
+      sessionStorage.setItem('user', JSON.stringify(user));
       window.location.href = frontend_url + 'index.html';
     })
     .catch(err => {
@@ -80,29 +76,24 @@ export function logout() {
 
 // Mostrar datos en modal de perfil
 export function populateModal() {
-  const parsed = JSON.parse(sessionStorage.getItem("user") || '{}');
-  const user = parsed.user || {};
-
-  document.getElementById('editName').value = user.nombre || "";
-  document.getElementById('editEmail').value = user.correo || "";
-  document.getElementById('editPwd').value = "";
+  const user = JSON.parse(sessionStorage.user);
+  document.getElementById('editName').value = user.nombre;
+  document.getElementById('editEmail').value = user.correo;
+  document.getElementById('editPwd').value = user.pass;
 }
 
 // Mostrar nombre del usuario en página
 export function init() {
-  const parsed = JSON.parse(sessionStorage.getItem("user") || '{}');
-  const user = parsed.user || {};
-
+  const user = JSON.parse(sessionStorage.user);
   const nameElement = document.getElementById('user-name') || document.getElementById('userNameWidget');
   if (nameElement) {
-    nameElement.innerText = user.nombre || "";
+    nameElement.innerText = user.nombre;
   }
 }
 
 // DOM loaded setup
 document.addEventListener('DOMContentLoaded', () => {
-  const parsed = JSON.parse(sessionStorage.getItem("user") || '{}');
-  const user = parsed.user || {};
+  const user = JSON.parse(sessionStorage.user || '{}');
 
   // Abrir modal perfil
   const modalEdit = document.getElementById('modalEdit');
@@ -110,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modalEdit.addEventListener('shown.bs.modal', populateModal);
   }
 
-  // Guardar cambios desde modal
+  // Guardar cambios
   const formEdit = document.getElementById('formEditUser');
   if (formEdit) {
     formEdit.addEventListener('submit', async (e) => {
@@ -132,10 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!res.ok) throw new Error("Error al actualizar");
 
         const updatedUser = await res.json();
-        sessionStorage.setItem('user', JSON.stringify({
-          token: parsed.token,
-          user: updatedUser
-        }));
+        sessionStorage.setItem('user', JSON.stringify(updatedUser));
         alert("Usuario actualizado con éxito");
         init();
       } catch (err) {
@@ -144,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Eliminar usuario desde modal
+  // Eliminar usuario
   const btnDelete = document.getElementById('btnDeleteUser');
   if (btnDelete) {
     btnDelete.addEventListener('click', async () => {
@@ -165,11 +153,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Para usar en otras peticiones con token si lo necesitas
+// Exporta headers con token para usar en cualquier fetch autenticado
 export function getAuthHeaders() {
-  const parsed = JSON.parse(sessionStorage.getItem("user") || '{}');
   return {
     'Content-Type': 'application/json',
-    'Authorization': parsed.token || ""
+    'Authorization': sessionStorage.getItem('token')
   };
 }
