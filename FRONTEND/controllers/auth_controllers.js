@@ -14,8 +14,7 @@ export function toggleForms() {
   }
 }
 
-
-// LOGIN: Guarda bien el usuario en sessionStorage
+// LOGIN: Guarda correctamente en sessionStorage con pass para demo
 export function login(event) {
   event.preventDefault();
 
@@ -31,8 +30,16 @@ export function login(event) {
       if (!response.ok) throw new Error("Correo y/o contraseña incorrectos");
       return response.json();
     })
-    .then(user => {
-      sessionStorage.setItem("user", JSON.stringify(user));
+    .then(data => {
+      sessionStorage.setItem("user", JSON.stringify({
+        token: data.token,
+        user: {
+          _id: data.user.id,           // Asegúrate de usar id o _id según venga
+          nombre: data.user.nombre,
+          correo: data.user.correo,
+          pass: pass                   // ⚠️ Solo para demo controlada
+        }
+      }));
       window.location.href = frontend_url + 'index.html';
     })
     .catch(err => {
@@ -40,8 +47,7 @@ export function login(event) {
     });
 }
 
-
-// Registro con MongoDB
+// REGISTRO con sessionStorage (demo)
 export function register(event) {
   event.preventDefault();
 
@@ -60,7 +66,15 @@ export function register(event) {
       return response.json();
     })
     .then(user => {
-      sessionStorage.setItem('user', JSON.stringify(user));
+      sessionStorage.setItem("user", JSON.stringify({
+        token: "demo-token",  // puedes dejar un string ficticio si no se usa
+        user: {
+          _id: user._id,
+          nombre: user.nombre,
+          correo: user.correo,
+          pass: pass // ⚠️ solo para demo
+        }
+      }));
       window.location.href = frontend_url + 'index.html';
     })
     .catch(err => {
@@ -74,34 +88,37 @@ export function logout() {
   window.location.href = frontend_url + 'login.html';
 }
 
-// Mostrar datos en modal de perfil
+// Modal de edición
 export function populateModal() {
-  const user = JSON.parse(sessionStorage.user);
-  document.getElementById('editName').value = user.nombre;
-  document.getElementById('editEmail').value = user.correo;
-  document.getElementById('editPwd').value = user.pass;
+  const data = JSON.parse(sessionStorage.getItem("user") || '{}');
+  const user = data.user || {};
+  document.getElementById('editName').value = user.nombre || "";
+  document.getElementById('editEmail').value = user.correo || "";
+  document.getElementById('editPwd').value = "";
 }
 
-// Mostrar nombre del usuario en página
+// Mostrar nombre del usuario en la página
 export function init() {
-  const user = JSON.parse(sessionStorage.user);
+  const data = JSON.parse(sessionStorage.getItem("user") || '{}');
+  const user = data.user || {};
   const nameElement = document.getElementById('user-name') || document.getElementById('userNameWidget');
   if (nameElement) {
-    nameElement.innerText = user.nombre;
+    nameElement.innerText = user.nombre || "";
   }
 }
 
-// DOM loaded setup
+// Guardar y eliminar desde modal
 document.addEventListener('DOMContentLoaded', () => {
-  const user = JSON.parse(sessionStorage.user || '{}');
+  const data = JSON.parse(sessionStorage.getItem("user") || '{}');
+  const user = data.user || {};
 
-  // Abrir modal perfil
+  // Modal editar
   const modalEdit = document.getElementById('modalEdit');
   if (modalEdit) {
     modalEdit.addEventListener('shown.bs.modal', populateModal);
   }
 
-  // Guardar cambios
+  // Form editar
   const formEdit = document.getElementById('formEditUser');
   if (formEdit) {
     formEdit.addEventListener('submit', async (e) => {
@@ -114,16 +131,17 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const res = await fetch(`${backend_url}api/users/${user._id}`, {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ nombre, correo, pass })
         });
 
         if (!res.ok) throw new Error("Error al actualizar");
 
-        const updatedUser = await res.json();
-        sessionStorage.setItem('user', JSON.stringify(updatedUser));
+        const updated = await res.json();
+        sessionStorage.setItem("user", JSON.stringify({
+          token: data.token,
+          user: updated
+        }));
         alert("Usuario actualizado con éxito");
         init();
       } catch (err) {
@@ -132,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Eliminar usuario
+  // Eliminar
   const btnDelete = document.getElementById('btnDeleteUser');
   if (btnDelete) {
     btnDelete.addEventListener('click', async () => {
@@ -153,10 +171,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Exporta headers con token para usar en cualquier fetch autenticado
+// Headers con token si los usas
 export function getAuthHeaders() {
+  const parsed = JSON.parse(sessionStorage.getItem("user") || '{}');
   return {
     'Content-Type': 'application/json',
-    'Authorization': sessionStorage.getItem('token')
+    'Authorization': parsed.token || ""
   };
 }
