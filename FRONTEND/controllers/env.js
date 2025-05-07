@@ -1,12 +1,18 @@
-const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+const hostname = window.location.hostname;
+const isLocalhost = hostname === "localhost" || hostname === "127.0.0.1";
+
+// Usa la IP base detectada
+const baseFrontend = `${window.location.protocol}//${hostname}:5500/FRONTEND/views/`;
 
 export const backend_url = isLocalhost
   ? "http://localhost:3000/"
   : "https://proyectoweb-k36n.onrender.com/";
 
 export const frontend_url = isLocalhost
-  ? "http://127.0.0.1:5500/FRONTEND/views/"
+  ? baseFrontend
   : "https://jpdelmuro.github.io/ProyectoWeb/FRONTEND/views/";
+
+
 
 
 // Validar sesión del usuario 
