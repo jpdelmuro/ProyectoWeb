@@ -14,8 +14,7 @@ export function toggleForms() {
   }
 }
 
-
-// LOGIN: Guarda bien el usuario en sessionStorage
+// LOGIN corregido
 export function login(event) {
   event.preventDefault();
 
@@ -31,8 +30,9 @@ export function login(event) {
       if (!response.ok) throw new Error("Correo y/o contraseña incorrectos");
       return response.json();
     })
-    .then(user => {
-      sessionStorage.setItem("user", JSON.stringify(user));
+    .then(data => {
+      sessionStorage.setItem("token", data.token);
+      sessionStorage.setItem("user", JSON.stringify(data.user));
       window.location.href = frontend_url + 'index.html';
     })
     .catch(err => {
@@ -40,8 +40,7 @@ export function login(event) {
     });
 }
 
-
-// Registro con MongoDB
+// Registro corregido
 export function register(event) {
   event.preventDefault();
 
@@ -59,8 +58,9 @@ export function register(event) {
       if (!response.ok) return response.json().then(err => { throw new Error(err.error); });
       return response.json();
     })
-    .then(user => {
-      sessionStorage.setItem('user', JSON.stringify(user));
+    .then(data => {
+      sessionStorage.setItem("token", data.token);
+      sessionStorage.setItem("user", JSON.stringify(data.user));
       window.location.href = frontend_url + 'index.html';
     })
     .catch(err => {
@@ -76,32 +76,30 @@ export function logout() {
 
 // Mostrar datos en modal de perfil
 export function populateModal() {
-  const user = JSON.parse(sessionStorage.user);
-  document.getElementById('editName').value = user.nombre;
-  document.getElementById('editEmail').value = user.correo;
-  document.getElementById('editPwd').value = user.pass;
+  const user = JSON.parse(sessionStorage.getItem("user") || '{}');
+  document.getElementById('editName').value = user.nombre || "";
+  document.getElementById('editEmail').value = user.correo || "";
+  document.getElementById('editPwd').value = "";
 }
 
 // Mostrar nombre del usuario en página
 export function init() {
-  const user = JSON.parse(sessionStorage.user);
+  const user = JSON.parse(sessionStorage.getItem("user") || '{}');
   const nameElement = document.getElementById('user-name') || document.getElementById('userNameWidget');
   if (nameElement) {
-    nameElement.innerText = user.nombre;
+    nameElement.innerText = user.nombre || "";
   }
 }
 
 // DOM loaded setup
 document.addEventListener('DOMContentLoaded', () => {
-  const user = JSON.parse(sessionStorage.user || '{}');
+  const user = JSON.parse(sessionStorage.getItem("user") || '{}');
 
-  // Abrir modal perfil
   const modalEdit = document.getElementById('modalEdit');
   if (modalEdit) {
     modalEdit.addEventListener('shown.bs.modal', populateModal);
   }
 
-  // Guardar cambios
   const formEdit = document.getElementById('formEditUser');
   if (formEdit) {
     formEdit.addEventListener('submit', async (e) => {
@@ -132,7 +130,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Eliminar usuario
   const btnDelete = document.getElementById('btnDeleteUser');
   if (btnDelete) {
     btnDelete.addEventListener('click', async () => {
@@ -153,10 +150,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Exporta headers con token para usar en cualquier fetch autenticado
+// Headers con token para fetch autenticado
 export function getAuthHeaders() {
   return {
     'Content-Type': 'application/json',
-    'Authorization': sessionStorage.getItem('token')
+    'Authorization': sessionStorage.getItem('token') || ''
   };
 }
