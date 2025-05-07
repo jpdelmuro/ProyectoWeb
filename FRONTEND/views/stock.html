@@ -369,16 +369,23 @@
             },
             locate: true
             }, (result) => {
-            if (result && result.codeResult) {
+              if (result && result.codeResult) {
                 const code = result.codeResult.code;
-                if (!scannedCodes.has(code)) {
-                scannedCodes.add(code);
-                const li = document.createElement("li");
-                li.className = "list-group-item";
-                li.textContent = `Código: ${code}`;
-                historyEl.appendChild(li);
                 console.log("✅ Código detectado:", code);
+
+                const inputManual = document.getElementById("inputManual");
+                const barcodeHidden = document.getElementById("barcodeProducto");
+
+                if (inputManual) inputManual.value = code;
+                if (barcodeHidden) barcodeHidden.value = code;
+
+                // Marcar como escaneado (opcional para evitar escaneos duplicados)
+                if (!scannedCodes.has(code)) {
+                    scannedCodes.add(code);
                 }
+
+                // Si quieres ocultar el historial, puedes limpiar esto:
+                historyEl.innerHTML = "";
             } else {
                 alert("No se detectó ningún código. Intenta enfocar mejor.");
             }
