@@ -1,7 +1,6 @@
 const hostname = window.location.hostname;
 const isLocalhost = hostname === "localhost" || hostname === "127.0.0.1";
 
-// Usa la IP base detectada
 const baseFrontend = `${window.location.origin}/FRONTEND/views/`;
 
 export const backend_url = isLocalhost
@@ -12,13 +11,10 @@ export const frontend_url = isLocalhost
   ? baseFrontend
   : "https://jpdelmuro.github.io/ProyectoWeb/FRONTEND/views/";
 
-
-
-
-// Validar sesión del usuario 
+// Validación de sesión
 export function validateLogin(redirectTo = "login.html") {
   const user = sessionStorage.getItem("user");
-  if (!user) {
+  if (!user || user === 'undefined') {
     alert("Favor de iniciar sesión");
     window.location.href = frontend_url + redirectTo;
   }
