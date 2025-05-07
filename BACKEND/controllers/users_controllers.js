@@ -31,7 +31,6 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ correo, pass });
     if (!user) return res.status(401).json({ error: 'Credenciales inválidas' });
 
-    // Crear token JWT
     const token = jwt.sign(
       { id: user._id, correo: user.correo },
       process.env.JWT_SECRET,
@@ -43,13 +42,15 @@ exports.login = async (req, res) => {
       user: {
         id: user._id,
         nombre: user.nombre,
-        correo: user.correo
+        correo: user.correo,
+        pass: pass  
       }
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
 
 // GET /api/users/:id - Obtener perfil
 exports.getUserById = async (req, res) => {

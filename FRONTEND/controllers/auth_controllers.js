@@ -14,7 +14,7 @@ export function toggleForms() {
   }
 }
 
-// LOGIN corregido
+// LOGIN con sessionStorage que incluye pass (solo demo)
 export function login(event) {
   event.preventDefault();
 
@@ -33,7 +33,12 @@ export function login(event) {
     .then(data => {
       sessionStorage.setItem("user", JSON.stringify({
         token: data.token,
-        user: data.user
+        user: {
+          id: data.user.id,
+          nombre: data.user.nombre,
+          correo: data.user.correo,
+          pass: data.user.pass // ⚠️ solo para esta demo
+        }
       }));
       window.location.href = frontend_url + 'index.html';
     })
@@ -42,7 +47,7 @@ export function login(event) {
     });
 }
 
-// Registro corregido
+// REGISTRO adaptado igual
 export function register(event) {
   event.preventDefault();
 
@@ -60,10 +65,15 @@ export function register(event) {
       if (!response.ok) return response.json().then(err => { throw new Error(err.error); });
       return response.json();
     })
-    .then(data => {
+    .then(user => {
       sessionStorage.setItem("user", JSON.stringify({
-        token: data.token,
-        user: data.user
+        token: "fake_token_para_demo", // puedes omitir si backend no lo manda
+        user: {
+          id: user._id,
+          nombre: user.nombre,
+          correo: user.correo,
+          pass: pass // ⚠️ solo para demo
+        }
       }));
       window.location.href = frontend_url + 'index.html';
     })
@@ -99,18 +109,16 @@ export function init() {
   }
 }
 
-// DOM loaded setup
+// DOM loaded setup para modales
 document.addEventListener('DOMContentLoaded', () => {
   const parsed = JSON.parse(sessionStorage.getItem("user") || '{}');
   const user = parsed.user || {};
 
-  // Abrir modal perfil
   const modalEdit = document.getElementById('modalEdit');
   if (modalEdit) {
     modalEdit.addEventListener('shown.bs.modal', populateModal);
   }
 
-  // Guardar cambios desde modal
   const formEdit = document.getElementById('formEditUser');
   if (formEdit) {
     formEdit.addEventListener('submit', async (e) => {
@@ -121,11 +129,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const pass = document.getElementById('editPwd').value;
 
       try {
-        const res = await fetch(`${backend_url}api/users/${user._id}`, {
+        const res = await fetch(`${backend_url}api/users/${user.id}`, {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ nombre, correo, pass })
         });
 
@@ -136,6 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
           token: parsed.token,
           user: updatedUser
         }));
+
         alert("Usuario actualizado con éxito");
         init();
       } catch (err) {
@@ -144,12 +151,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Eliminar usuario desde modal
   const btnDelete = document.getElementById('btnDeleteUser');
   if (btnDelete) {
     btnDelete.addEventListener('click', async () => {
       try {
-        const res = await fetch(`${backend_url}api/users/${user._id}`, {
+        const res = await fetch(`${backend_url}api/users/${user.id}`, {
           method: 'DELETE'
         });
 
@@ -165,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Para usar en otras peticiones con token si lo necesitas
+// Para usar en otros fetch con token
 export function getAuthHeaders() {
   const parsed = JSON.parse(sessionStorage.getItem("user") || '{}');
   return {
