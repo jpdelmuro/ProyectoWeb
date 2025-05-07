@@ -1,19 +1,31 @@
 import { backend_url, frontend_url } from '../controllers/env.js';
 
 document.addEventListener("DOMContentLoaded", () => {
-  const userString = sessionStorage.getItem("user");
-  if (!userString || userString === 'undefined') {
+  const rawUser = sessionStorage.getItem("user");
+
+  // Validar sesión y formato
+  if (!rawUser || rawUser === 'undefined') {
+    sessionStorage.clear();
+    alert("Tu sesión ha expirado. Inicia sesión de nuevo.");
     window.location.href = frontend_url + "login.html";
     return;
   }
 
-  const user = JSON.parse(userString);
+  let user;
+  try {
+    user = JSON.parse(rawUser);
+  } catch (err) {
+    sessionStorage.clear();
+    alert("Error de sesión. Inicia sesión de nuevo.");
+    window.location.href = frontend_url + "login.html";
+    return;
+  }
 
-  // Mostrar datos actuales
-  document.getElementById("editName").value = user.nombre;
-  document.getElementById("editEmail").value = user.correo;
+  // Mostrar los datos actuales
+  document.getElementById("editName").value = user.nombre || "";
+  document.getElementById("editEmail").value = user.correo || "";
 
-  // Guardar cambios
+  // Escuchar formulario
   document.querySelector("form").addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -36,16 +48,14 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const res = await fetch(`${backend_url}api/users/${user._id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
       });
 
       if (!res.ok) throw new Error("Error al actualizar usuario");
 
       const updated = await res.json();
-      sessionStorage.setItem("user", JSON.stringify(updated)); // ✅ actualizar en sessionStorage
+      sessionStorage.setItem("user", JSON.stringify(updated));
 
       const modal = new bootstrap.Modal(document.getElementById('modalGuardado'));
       modal.show();

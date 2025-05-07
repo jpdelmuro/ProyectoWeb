@@ -32,7 +32,7 @@ export function login(event) {
       return response.json();
     })
     .then(user => {
-      sessionStorage.setItem('user', JSON.stringify(user)); // ✅ CORRECTO
+      sessionStorage.setItem("user", JSON.stringify(user));
       window.location.href = frontend_url + 'index.html';
     })
     .catch(err => {
@@ -60,7 +60,7 @@ export function register(event) {
       return response.json();
     })
     .then(user => {
-      sessionStorage.setItem('user', JSON.stringify(user));
+      sessionStorage.setItem("user", JSON.stringify(user));
       window.location.href = frontend_url + 'index.html';
     })
     .catch(err => {
