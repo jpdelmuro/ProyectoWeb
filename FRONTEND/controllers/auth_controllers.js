@@ -14,7 +14,7 @@ export function toggleForms() {
   }
 }
 
-// LOGIN: Guarda correctamente en sessionStorage con pass para demo
+// LOGIN
 export function login(event) {
   event.preventDefault();
 
@@ -47,7 +47,7 @@ export function login(event) {
     });
 }
 
-// REGISTRO con sessionStorage (demo)
+// REGISTRO
 export function register(event) {
   event.preventDefault();
 
