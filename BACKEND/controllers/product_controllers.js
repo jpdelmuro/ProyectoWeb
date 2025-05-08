@@ -40,7 +40,7 @@ exports.addProducto = async (req, res) => {
 // Eliminar producto del usuario actual
 exports.deleteProducto = async (req, res) => {
   try {
-    const producto = await Producto.findOneAndDelete({
+    const producto = await Producto.findOne({
       _id: req.params.id,
       owners: req.user.id
     });
@@ -49,11 +49,30 @@ exports.deleteProducto = async (req, res) => {
       return res.status(404).json({ message: 'Producto no encontrado o no autorizado' });
     }
 
-    res.json({ message: 'Producto eliminado', producto });
+    // Antes de eliminar, mover a shoppingList si era inventory
+    if (producto.type === "inventory") {
+      const nuevo = new Producto({
+        name: producto.name,
+        quantity: producto.quantity,
+        category: producto.category,
+        type: "shoppingList",
+        price: producto.price,
+        barcode: producto.barcode,
+        owners: producto.owners
+      });
+
+      await nuevo.save(); // Guardar en lista de compras
+    }
+
+    // Luego eliminar del inventario
+    await producto.deleteOne();
+
+    res.json({ message: 'Producto eliminado y transferido (si aplica)', producto });
   } catch (err) {
     res.status(500).json({ error: 'Error al eliminar el producto' });
   }
 };
+
 
 
 // Buscar producto por código de barras
