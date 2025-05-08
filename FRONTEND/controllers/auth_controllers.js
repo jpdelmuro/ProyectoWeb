@@ -34,10 +34,10 @@ export function login(event) {
       sessionStorage.setItem("user", JSON.stringify({
         token: data.token,
         user: {
-          _id: data.user.id,           // Asegúrate de usar id o _id según venga
+          _id: data.user.id,       
           nombre: data.user.nombre,
           correo: data.user.correo,
-          pass: pass                   // ⚠️ Solo para demo controlada
+          pass: pass
         }
       }));
       window.location.href = frontend_url + 'index.html';
@@ -67,12 +67,12 @@ export function register(event) {
     })
     .then(user => {
       sessionStorage.setItem("user", JSON.stringify({
-        token: "demo-token",  // puedes dejar un string ficticio si no se usa
+        token: "demo-token",  
         user: {
           _id: user._id,
           nombre: user.nombre,
           correo: user.correo,
-          pass: pass // ⚠️ solo para demo
+          pass: pass
         }
       }));
       window.location.href = frontend_url + 'index.html';
@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Headers con token si los usas
+
 export function getAuthHeaders() {
   const parsed = JSON.parse(sessionStorage.getItem("user") || '{}');
   return {

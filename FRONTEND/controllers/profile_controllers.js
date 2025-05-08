@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
         token: parsedData.token,
         user: {
           ...updated,
-          pass: updatedData.pass  // conserva la nueva contraseña en sesión
+          pass: updatedData.pass
         }
       }));
 
