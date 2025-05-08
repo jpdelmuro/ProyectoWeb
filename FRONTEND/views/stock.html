@@ -140,7 +140,7 @@
             
             <!-- Titulo H1 -->
             <br><br>
-            <h1 style="color: white; text-align: center; font-weight: bold;">Inventario</h1>
+            <h1 style="color: white; text-align: center; font-weight: bold;">Inventarios</h1>
             <br>
 
             <!-- Caja de texto -->
@@ -555,6 +555,31 @@
               }
           
               cargarInventario();
+              // Manejar clic en botón ❌ para mover producto a "shoppingList"
+              document.getElementById("listaProductos").addEventListener("click", async (e) => {
+                if (e.target.classList.contains("eliminar-producto")) {
+                  const id = e.target.getAttribute("data-id");
+                  if (!id) return;
+
+                  try {
+                    const res = await fetch(`${backend_url}api/productos/${id}`, {
+                      method: 'PUT',
+                      headers: getAuthHeaders(),
+                      body: JSON.stringify({ type: "shoppingList" })
+                    });
+
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.message || "Error al mover el producto");
+
+                    // Eliminar del DOM si se movió correctamente
+                    const li = e.target.closest("li");
+                    if (li) li.remove();
+                  } catch (err) {
+                    console.error("Error al mover producto:", err.message);
+                  }
+                }
+              });
+
             });
         </script>
           
