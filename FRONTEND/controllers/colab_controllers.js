@@ -45,8 +45,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Confirmar y enviar solicitud al backend
-  window.confirmarInvitacion = async () => {
+  // Confirmar botón del modal
+  const btnConfirmar = document.getElementById("btnConfirmar");
+  if (btnConfirmar) {
+    btnConfirmar.addEventListener("click", confirmarInvitacion);
+  }
+
+  async function confirmarInvitacion() {
     try {
       const res = await fetch(`${backend_url}api/users/${user._id}/colaboradores`, {
         method: 'POST',
@@ -68,5 +73,5 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (err) {
       alert(err.message);
     }
-  };
+  }
 });
