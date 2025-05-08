@@ -28,26 +28,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let emailColaborador = "";
 
-  // Mostrar modal de confirmación
-  window.mostrarModal = (event) => {
-    event.preventDefault();
-    emailColaborador = document.getElementById("email").value.trim();
-    if (!emailColaborador) return;
+  // Capturar envío del formulario
+  const form = document.getElementById("formColaborador");
+  if (form) {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      emailColaborador = document.getElementById("email").value.trim();
+      if (!emailColaborador) {
+        alert("Ingresa un correo válido");
+        return;
+      }
 
-    document.getElementById("emailDestino").textContent = emailColaborador;
+      document.getElementById("emailDestino").textContent = emailColaborador;
+      const modal = new bootstrap.Modal(document.getElementById("confirmModal"));
+      modal.show();
+    });
+  }
 
-    const modal = new bootstrap.Modal(document.getElementById("confirmModal"));
-    modal.show();
-  };
-
-  // Confirmar e invitar
+  // Confirmar y enviar solicitud al backend
   window.confirmarInvitacion = async () => {
     try {
       const res = await fetch(`${backend_url}api/users/${user._id}/colaboradores`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          // Authorization puede agregarse si implementas middleware de autenticación
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({ correoColaborador: emailColaborador })
       });
