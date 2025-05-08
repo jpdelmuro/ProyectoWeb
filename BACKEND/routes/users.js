@@ -7,7 +7,7 @@ router.post('/', usersController.registerUser);
 router.post('/login', usersController.login);
 
 // Colaboradores
-router.post('/:id/colaboradores', usersController.agregarColaborador); // ✅ ESTA ES LA CLAVE
+router.post('/:id/colaboradores', usersController.agregarColaborador);
 
 // CRUD con ID
 router.get('/:id', usersController.getUserById);

@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Confirmar invitación
   const btnConfirmar = document.getElementById("btnConfirmar");
   if (!btnConfirmar) {
-    console.error("❌ No se encontró el botón con ID 'btnConfirmar'");
+    console.error("No se encontró el botón con ID 'btnConfirmar'");
   } else {
     btnConfirmar.addEventListener("click", async () => {
       try {

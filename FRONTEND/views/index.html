@@ -338,7 +338,7 @@
                     filtrados.forEach(renderProducto);
 
                   } catch (err) {
-                    console.error("❌ Error al cargar productos:", err.message);
+                    console.error("Error al cargar productos:", err.message);
                   }
                 }
               
@@ -379,7 +379,7 @@
                   }
                 });
               
-                // Delegación para manejar clics en ❌
+                
                 lista.addEventListener('click', async function (e) {
                   if (e.target.classList.contains('eliminar-producto')) {
                     const id = e.target.getAttribute('data-id');
@@ -397,7 +397,7 @@
                       const li = e.target.closest('li');
                       if (li) li.remove();
                     } catch (err) {
-                      alert("❌ No se pudo eliminar: " + err.message);
+                      alert("No se pudo eliminar: " + err.message);
                     }
                   }
                 });

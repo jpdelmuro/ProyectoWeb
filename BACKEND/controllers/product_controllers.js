@@ -73,7 +73,7 @@ exports.getByBarcode = async (req, res) => {
   }
 };
 
-// Actualizar producto (por ejemplo, cambiar de inventory a shoppingList)
+// Actualizar producto
 exports.updateProducto = async (req, res) => {
   const { id } = req.params;
   const updateData = req.body;

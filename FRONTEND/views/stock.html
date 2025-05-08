@@ -371,7 +371,7 @@
             }, (result) => {
               if (result && result.codeResult) {
                 const code = result.codeResult.code;
-                console.log("✅ Código detectado:", code);
+                console.log("Código detectado:", code);
 
                 const inputManual = document.getElementById("inputManual");
                 const barcodeHidden = document.getElementById("barcodeProducto");
@@ -446,9 +446,9 @@
                   categoriaSelect.value = data.category;
                   barcodeInput.value = codigoFalso;
           
-                  alert("✅ Producto autocompletado");
+                  alert("Producto autocompletado");
                 } catch (err) {
-                  alert("❌ No se encontró el código: " + err.message);
+                  alert("No se encontró el código: " + err.message);
                 }
               });
           
@@ -490,7 +490,7 @@
                     const data = await res.json();
                     if (!res.ok) throw new Error(data.message || 'Error al guardar');
           
-                    alert("✅ Producto guardado con éxito");
+                    alert("Producto guardado con éxito");
                     form.reset();
                     barcodeInput.value = "";
                     inputManual.value = "";
@@ -500,7 +500,7 @@
           
                     renderProducto(data);
                   } catch (err) {
-                    alert("❌ " + err.message);
+                    alert(err.message);
                   }
                 } else {
                   alert("Completa todos los campos obligatorios");
@@ -550,12 +550,12 @@
                   const productos = await res.json();
                   productos.filter(p => p.type === 'inventory').forEach(renderProducto);
                 } catch (err) {
-                  console.error("❌ Error al cargar inventario:", err.message);
+                  console.error("Error al cargar inventario:", err.message);
                 }
               }
           
               cargarInventario();
-              // Manejar clic en botón ❌ para mover producto a "shoppingList"
+              // Manejar clic en botón X para mover producto a "shoppingList"
               document.getElementById("listaProductos").addEventListener("click", async (e) => {
                 if (e.target.classList.contains("eliminar-producto")) {
                   const id = e.target.getAttribute("data-id");
@@ -581,12 +581,7 @@
               });
 
             });
-        </script>
-          
-            
-            
-               
-            
+        </script>  
           <script type="module">
             import { validateLogin } from '../controllers/env.js';
             validateLogin(); 
