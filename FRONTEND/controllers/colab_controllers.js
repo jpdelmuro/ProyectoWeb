@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       emailColaborador = document.getElementById("email").value.trim();
       if (!emailColaborador) {
-        alert("Ingresa un correo válido");
+        alert("Ingresa un correo válido.");
         return;
       }
 
@@ -45,33 +45,34 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Confirmar botón del modal
+  // Confirmar invitación
   const btnConfirmar = document.getElementById("btnConfirmar");
-  if (btnConfirmar) {
-    btnConfirmar.addEventListener("click", confirmarInvitacion);
-  }
+  if (!btnConfirmar) {
+    console.error("❌ No se encontró el botón con ID 'btnConfirmar'");
+  } else {
+    btnConfirmar.addEventListener("click", async () => {
+      try {
+        const res = await fetch(`${backend_url}api/users/${user._id}/colaboradores`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ correoColaborador: emailColaborador })
+        });
 
-  async function confirmarInvitacion() {
-    try {
-      const res = await fetch(`${backend_url}api/users/${user._id}/colaboradores`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ correoColaborador: emailColaborador })
-      });
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.error || "No se pudo agregar colaborador");
 
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error || "No se pudo agregar colaborador");
+        alert("Colaborador agregado con éxito.");
+        document.getElementById("email").value = "";
 
-      alert("Colaborador agregado con éxito.");
-      document.getElementById("email").value = "";
+        const modalEl = document.getElementById("confirmModal");
+        const modal = bootstrap.Modal.getInstance(modalEl);
+        if (modal) modal.hide();
 
-      const modalEl = document.getElementById("confirmModal");
-      const modal = bootstrap.Modal.getInstance(modalEl);
-      modal.hide();
-    } catch (err) {
-      alert(err.message);
-    }
+      } catch (err) {
+        alert(err.message);
+      }
+    });
   }
 });
