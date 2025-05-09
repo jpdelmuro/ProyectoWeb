@@ -286,8 +286,6 @@
             });
             });
         </script>
-  
-
             <!-- Script buscador en modal -->
             <script>
                 document.addEventListener("DOMContentLoaded", function () {
@@ -317,7 +315,7 @@
                   item.setAttribute("data-id", producto._id);
                   item.innerHTML = `
                     ${producto.name} (x${producto.quantity}) 
-                    <i class="fa-solid fa-xmark text-danger eliminar-producto" style="cursor: pointer;" data-id="${producto._id}"></i>
+                    <i class="fa-solid fa-check text-success eliminar-producto" style="cursor: pointer;" data-id="${producto._id}"></i>
                   `;
                   lista.appendChild(item);
                 }

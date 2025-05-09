@@ -153,8 +153,6 @@
                 </div>
             </div>
 
-
-            <!-- Modal codigo de barras -->
             <!-- Modal Agregar Producto -->
             <div class="modal fade" id="modalAgregarProducto" tabindex="-1" aria-labelledby="modalAgregarProductoLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -225,6 +223,53 @@
                     </div>
                 </div>
                 </div>
+            </div>
+
+
+             <!-- Modal Editar Producto -->
+            <div class="modal fade" id="modalEditarProducto" tabindex="-1" aria-labelledby="modalEditarProductoLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="modalEditarProductoLabel">Editar producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form id="formEditarProducto">
+                      <input type="hidden" id="editarProductoId">
+                      <div class="mb-3">
+                        <label for="editarNombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="editarNombre" required>
+                      </div>
+                      <div class="mb-3">
+                        <label for="editarCantidad" class="form-label">Cantidad</label>
+                        <input type="number" class="form-control" id="editarCantidad" min="1" required>
+                      </div>
+                      <div class="mb-3">
+                        <label for="editarPrecio" class="form-label">Precio</label>
+                        <input type="text" class="form-control" id="editarPrecio" required>
+                      </div>
+                      <div class="mb-3">
+                        <label for="editarCategoria" class="form-label">Categoría</label>
+                        <select class="form-select" id="editarCategoria" required>
+                          <option value="FrutasyVerduras">Frutas y verduras</option>
+                          <option value="Animal">De origen animal</option>
+                          <option value="Cereales">Cereales, granos y panadería</option>
+                          <option value="Snacks">Snacks</option>
+                          <option value="Bebidas">Bebidas</option>
+                          <option value="Limpieza">Limpieza</option>
+                          <option value="Higiene">Higiene</option>
+                          <option value="Otro">Otro</option>
+                        </select>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" id="btnEliminarProducto">Eliminar producto</button>
+                    <button type="submit" class="btn btn-primary" form="formEditarProducto">Guardar cambios</button>
+                  </div>
+                </div>
+              </div>
             </div>
   
 
@@ -383,8 +428,6 @@
                 if (!scannedCodes.has(code)) {
                     scannedCodes.add(code);
                 }
-
-                // Si quieres ocultar el historial, puedes limpiar esto:
                 historyEl.innerHTML = "";
             } else {
                 alert("No se detectó ningún código. Intenta enfocar mejor.");
@@ -392,10 +435,6 @@
             });
         });
         });
-
-        
-
-
         </script>  
         <!-- Script buscador en modal --> 
         <script>
@@ -411,180 +450,252 @@
             });
         </script>
         <script type="module">
-            import { backend_url } from '../controllers/env.js';
-            import { getAuthHeaders } from '../controllers/auth_controllers.js';
-          
-            document.addEventListener("DOMContentLoaded", () => {
-              const form = document.getElementById("formAgregarProducto");
-              const lista = document.getElementById("listaProductos");
-              const nombreInput = document.getElementById("nombreProducto");
-              const cantidadInput = document.getElementById("cantidadProducto");
-              const precioInput = document.getElementById("precioProducto");
-              const categoriaSelect = document.getElementById("categoriaProducto");
-              const barcodeInput = document.getElementById("barcodeProducto");
-              const scanButton = document.getElementById("scan-button");
-          
-              const inputManual = document.getElementById("inputManual");
-
-          
-              const buscarBtn = document.getElementById("buscarPorCodigo");
-
-              buscarBtn.className = "btn btn-warning btn-sm mb-2";
-              buscarBtn.innerText = "Buscar por código";
-          
-              buscarBtn.addEventListener("click", async () => {
-                const codigoFalso = inputManual.value.trim();
-                if (!codigoFalso) return alert("Ingresa un código primero");
-          
-                try {
-                  const res = await fetch(`${backend_url}api/productos/barcode/${codigoFalso}`);
-                  const data = await res.json();
-                  if (!res.ok) throw new Error(data.message || "No encontrado");
-          
-                  nombreInput.value = data.name;
-                  precioInput.value = data.price;
-                  categoriaSelect.value = data.category;
-                  barcodeInput.value = codigoFalso;
-          
-                  alert("Producto autocompletado");
-                } catch (err) {
-                  alert("No se encontró el código: " + err.message);
-                }
-              });
-          
-              if (scanButton?.parentElement) {
-                scanButton.parentElement.appendChild(inputManual);
-                scanButton.parentElement.appendChild(buscarBtn);
+          import { backend_url } from '../controllers/env.js';
+          import { getAuthHeaders } from '../controllers/auth_controllers.js';
+        
+          document.addEventListener("DOMContentLoaded", () => {
+            const form = document.getElementById("formAgregarProducto");
+            const lista = document.getElementById("listaProductos");
+            const nombreInput = document.getElementById("nombreProducto");
+            const cantidadInput = document.getElementById("cantidadProducto");
+            const precioInput = document.getElementById("precioProducto");
+            const categoriaSelect = document.getElementById("categoriaProducto");
+            const barcodeInput = document.getElementById("barcodeProducto");
+            const scanButton = document.getElementById("scan-button");
+            const inputManual = document.getElementById("inputManual");
+            const buscarBtn = document.getElementById("buscarPorCodigo");
+        
+            buscarBtn.className = "btn btn-warning btn-sm mb-2";
+            buscarBtn.innerText = "Buscar por código";
+        
+            buscarBtn.addEventListener("click", async () => {
+              const codigoFalso = inputManual.value.trim();
+              if (!codigoFalso) return alert("Ingresa un código primero");
+        
+              try {
+                const res = await fetch(`${backend_url}api/productos/barcode/${codigoFalso}`);
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || "No encontrado");
+        
+                nombreInput.value = data.name;
+                precioInput.value = data.price;
+                categoriaSelect.value = data.category;
+                barcodeInput.value = codigoFalso;
+        
+                alert("Producto autocompletado");
+              } catch (err) {
+                alert("No se encontró el código: " + err.message);
               }
-          
-              form.addEventListener("submit", async function (e) {
-                e.preventDefault();
-          
-                const nombre = nombreInput.value.trim();
-                const cantidad = parseInt(cantidadInput.value.trim());
-                const precio = precioInput.value.trim();
-                const categoria = categoriaSelect.value;
-                const codigoManual = inputManual.value.trim();
-          
-                if (!barcodeInput.value && codigoManual) {
-                  barcodeInput.value = codigoManual;
-                }
-          
-                const barcode = barcodeInput.value.trim();
-          
-                if (nombre && cantidad && categoria && precio) {
-                  try {
-                    const res = await fetch(`${backend_url}api/productos`, {
-                      method: 'POST',
-                      headers: getAuthHeaders(),
-                      body: JSON.stringify({
-                        name: nombre,
-                        quantity: cantidad,
-                        category: categoria,
-                        type: 'inventory',
-                        price: precio,
-                        barcode: barcode
-                      })
-                    });
-          
-                    const data = await res.json();
-                    if (!res.ok) throw new Error(data.message || 'Error al guardar');
-          
-                    alert("Producto guardado con éxito");
-                    form.reset();
-                    barcodeInput.value = "";
-                    inputManual.value = "";
-          
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('modalAgregarProducto'));
-                    modal.hide();
-          
-                    renderProducto(data);
-                  } catch (err) {
-                    alert(err.message);
-                  }
-                } else {
-                  alert("Completa todos los campos obligatorios");
-                }
-              });
-          
-              const historyEl = document.getElementById("barcode-history");
-              if (scanButton && historyEl) {
-                scanButton.addEventListener("click", () => {
-                  const lastCode = historyEl.querySelector("li:last-child");
-                  if (lastCode) {
-                    const code = lastCode.textContent.replace("Código: ", "");
-                    barcodeInput.value = code;
-                  }
-                });
+            });
+        
+            if (scanButton?.parentElement) {
+              scanButton.parentElement.appendChild(inputManual);
+              scanButton.parentElement.appendChild(buscarBtn);
+            }
+        
+            form.addEventListener("submit", async function (e) {
+              e.preventDefault();
+        
+              const nombre = nombreInput.value.trim();
+              const cantidad = parseInt(cantidadInput.value.trim());
+              const precio = precioInput.value.trim();
+              const categoria = categoriaSelect.value;
+              const codigoManual = inputManual.value.trim();
+        
+              if (!barcodeInput.value && codigoManual) {
+                barcodeInput.value = codigoManual;
               }
-          
-              const modalElement = document.getElementById("modalAgregarProducto");
-              modalElement.addEventListener("hidden.bs.modal", () => {
-                form.reset();
-                barcodeInput.value = "";
-                inputManual.value = "";
-              });
-          
-              function renderProducto(producto) {
-                if (producto.type !== 'inventory') return;
-          
-                const item = document.createElement("li");
-                item.className = "list-group-item d-flex justify-content-between align-items-center";
-                item.setAttribute("data-category", producto.category);
-                item.innerHTML = `
-                  ${producto.name} (x${producto.quantity}) - ${producto.price || "$0"}
-                  <span>
-                    <i class="fa-solid fa-pen text-primary me-3" style="cursor: pointer;"></i>
-                    <i class="fa-solid fa-xmark text-danger eliminar-producto" style="cursor: pointer;" data-id="${producto._id}"></i>
-                  </span>
-                `;
-                lista.appendChild(item);
-              }
-          
-              async function cargarInventario() {
+        
+              const barcode = barcodeInput.value.trim();
+        
+              if (nombre && cantidad && categoria && precio) {
                 try {
                   const res = await fetch(`${backend_url}api/productos`, {
-                    method: 'GET',
-                    headers: getAuthHeaders()
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({
+                      name: nombre,
+                      quantity: cantidad,
+                      category: categoria,
+                      type: 'inventory',
+                      price: precio,
+                      barcode: barcode
+                    })
                   });
-                  const productos = await res.json();
-                  productos.filter(p => p.type === 'inventory').forEach(renderProducto);
+        
+                  const data = await res.json();
+                  if (!res.ok) throw new Error(data.message || 'Error al guardar');
+        
+                  alert("Producto guardado con éxito");
+                  form.reset();
+                  barcodeInput.value = "";
+                  inputManual.value = "";
+        
+                  const modal = bootstrap.Modal.getInstance(document.getElementById('modalAgregarProducto'));
+                  modal.hide();
+        
+                  renderProducto(data);
                 } catch (err) {
-                  console.error("Error al cargar inventario:", err.message);
+                  alert(err.message);
                 }
+              } else {
+                alert("Completa todos los campos obligatorios");
               }
-          
-              cargarInventario();
-              // Manejar clic en botón X para mover producto a "shoppingList"
-              document.getElementById("listaProductos").addEventListener("click", async (e) => {
-                if (e.target.classList.contains("eliminar-producto")) {
-                  const id = e.target.getAttribute("data-id");
-                  if (!id) return;
-
-                  try {
-                    const res = await fetch(`${backend_url}api/productos/${id}`, {
-                      method: 'PUT',
-                      headers: getAuthHeaders(),
-                      body: JSON.stringify({ type: "shoppingList" })
-                    });
-
-                    const data = await res.json();
-                    if (!res.ok) throw new Error(data.message || "Error al mover el producto");
-
-                    // Eliminar del DOM si se movió correctamente
-                    const li = e.target.closest("li");
-                    if (li) li.remove();
-                  } catch (err) {
-                    console.error("Error al mover producto:", err.message);
-                  }
+            });
+        
+            const historyEl = document.getElementById("barcode-history");
+            if (scanButton && historyEl) {
+              scanButton.addEventListener("click", () => {
+                const lastCode = historyEl.querySelector("li:last-child");
+                if (lastCode) {
+                  const code = lastCode.textContent.replace("Código: ", "");
+                  barcodeInput.value = code;
                 }
               });
-
+            }
+        
+            const modalElement = document.getElementById("modalAgregarProducto");
+            modalElement.addEventListener("hidden.bs.modal", () => {
+              form.reset();
+              barcodeInput.value = "";
+              inputManual.value = "";
             });
-        </script>  
-          <script type="module">
-            import { validateLogin } from '../controllers/env.js';
-            validateLogin(); 
-          </script>        
+        
+            function renderProducto(producto) {
+              if (producto.type !== 'inventory') return;
+        
+              const item = document.createElement("li");
+              item.className = "list-group-item d-flex justify-content-between align-items-center";
+              item.setAttribute("data-category", producto.category);
+              item.innerHTML = `
+                ${producto.name} (x${producto.quantity}) - ${producto.price || "$0"}
+                <span>
+                  <i class="fa-solid fa-pen text-primary me-3" style="cursor: pointer;"></i>
+                  <i class="fa-solid fa-xmark text-danger eliminar-producto" style="cursor: pointer;" data-id="${producto._id}"></i>
+                </span>
+              `;
+              lista.appendChild(item);
+            }
+        
+            async function cargarInventario() {
+              try {
+                const res = await fetch(`${backend_url}api/productos`, {
+                  method: 'GET',
+                  headers: getAuthHeaders()
+                });
+                const productos = await res.json();
+                productos.filter(p => p.type === 'inventory').forEach(renderProducto);
+              } catch (err) {
+                console.error("Error al cargar inventario:", err.message);
+              }
+            }
+        
+            cargarInventario();
+        
+            // Manejo de eventos para editar o mover productos
+            document.getElementById("listaProductos").addEventListener("click", async (e) => {
+              // Eliminar/mover a lista de compras
+              if (e.target.classList.contains("eliminar-producto")) {
+                const id = e.target.getAttribute("data-id");
+                if (!id) return;
+        
+                try {
+                  const res = await fetch(`${backend_url}api/productos/${id}`, {
+                    method: 'PUT',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({ type: "shoppingList" })
+                  });
+        
+                  const data = await res.json();
+                  if (!res.ok) throw new Error(data.message || "Error al mover el producto");
+        
+                  const li = e.target.closest("li");
+                  if (li) li.remove();
+                } catch (err) {
+                  console.error("Error al mover producto:", err.message);
+                }
+              }
+        
+              // Editar producto (mostrar modal con datos)
+              if (e.target.classList.contains("fa-pen")) {
+                const li = e.target.closest("li");
+                const id = e.target.nextElementSibling?.getAttribute("data-id");
+                if (!li || !id) return;
+        
+                const texto = li.childNodes[0].textContent.trim();
+                const regex = /(.*) \(x(\d+)\) - (.+)/;
+                const match = texto.match(regex);
+        
+                if (!match) return;
+                const [_, nombre, cantidad, precio] = match;
+        
+                document.getElementById("editarProductoId").value = id;
+                document.getElementById("editarNombre").value = nombre;
+                document.getElementById("editarCantidad").value = cantidad;
+                document.getElementById("editarPrecio").value = precio;
+                document.getElementById("editarCategoria").value = li.getAttribute("data-category");
+        
+                const modal = new bootstrap.Modal(document.getElementById("modalEditarProducto"));
+                modal.show();
+              }
+            });
+        
+            // Guardar cambios en edición
+            document.getElementById("formEditarProducto").addEventListener("submit", async (e) => {
+              e.preventDefault();
+        
+              const id = document.getElementById("editarProductoId").value;
+              const name = document.getElementById("editarNombre").value.trim();
+              const quantity = parseInt(document.getElementById("editarCantidad").value.trim());
+              const price = document.getElementById("editarPrecio").value.trim();
+              const category = document.getElementById("editarCategoria").value;
+        
+              try {
+                const res = await fetch(`${backend_url}api/productos/${id}`, {
+                  method: 'PUT',
+                  headers: getAuthHeaders(),
+                  body: JSON.stringify({ name, quantity, price, category })
+                });
+        
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || "Error al actualizar");
+        
+                alert("Producto actualizado con éxito");
+                bootstrap.Modal.getInstance(document.getElementById("modalEditarProducto")).hide();
+                window.location.reload();
+              } catch (err) {
+                alert("Error: " + err.message);
+              }
+            });
+        
+            // Eliminar producto desde el modal
+            document.getElementById("btnEliminarProducto").addEventListener("click", async () => {
+              const id = document.getElementById("editarProductoId").value;
+              if (!id) return alert("No se encontró el ID del producto");
+        
+              if (!confirm("¿Estás seguro de que quieres eliminar este producto?")) return;
+        
+              try {
+                const res = await fetch(`${backend_url}api/productos/${id}`, {
+                  method: 'DELETE',
+                  headers: getAuthHeaders()
+                });
+        
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || "Error al eliminar");
+        
+                alert("Producto eliminado con éxito");
+                bootstrap.Modal.getInstance(document.getElementById("modalEditarProducto")).hide();
+                window.location.reload();
+              } catch (err) {
+                alert("Error al eliminar producto: " + err.message);
+              }
+            });
+          });
+        </script>          
+        <script type="module">
+          import { validateLogin } from '../controllers/env.js';
+          validateLogin(); 
+        </script>        
     </body>
 </html>
