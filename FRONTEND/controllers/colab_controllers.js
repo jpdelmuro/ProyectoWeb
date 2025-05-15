@@ -26,6 +26,37 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
+
+  async function cargarColaboradores() {
+    try {
+      const res = await fetch(`${backend_url}api/users/${user._id}/colaboradores`);
+      const colaboradores = await res.json();
+
+      const lista = document.getElementById("listaColaboradores");
+      if (!lista) return;
+
+      lista.innerHTML = "";
+
+      if (!Array.isArray(colaboradores) || colaboradores.length === 0) {
+        lista.innerHTML = "<li class='list-group-item'>No tienes colaboradores aún.</li>";
+        return;
+      }
+
+      colaboradores.forEach(col => {
+        const li = document.createElement("li");
+        li.className = "list-group-item";
+        li.textContent = `${col.nombre} (${col.correo})`;
+        lista.appendChild(li);
+      });
+    } catch (err) {
+      console.error("Error al cargar colaboradores:", err);
+    }
+  }
+
+  // 🔁 Llamar a la función una vez cargado el usuario
+  cargarColaboradores();
+
+
   let emailColaborador = "";
 
   // Capturar envío del formulario

@@ -117,3 +117,16 @@ exports.agregarColaborador = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// GET /api/users/:id/colaboradores - Obtener los colaboradores de un usuario
+exports.getColaboradores = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).populate('colaboradores', 'nombre correo');
+    if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
+
+    res.json(user.colaboradores);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
