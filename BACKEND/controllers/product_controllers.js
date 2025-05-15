@@ -1,22 +1,32 @@
 const Producto = require('../models/producto');
+const User = require('../models/user'); // Importante: asegúrate de importar el modelo User arriba
 
-// Obtener productos del usuario actual
 exports.getProductos = async (req, res) => {
   try {
-    const productos = await Producto.find({ owners: req.user.id });
+    const user = await User.findById(req.user.id).populate('colaboradores', '_id');
+    const colaboradoresIds = user.colaboradores.map(c => c._id);
+    const idsPermitidos = [req.user.id, ...colaboradoresIds];
+
+    const productos = await Producto.find({ owners: { $in: idsPermitidos } });
+
     res.status(200).json(productos);
   } catch (error) {
     res.status(500).json({ error: 'Error al obtener los productos' });
   }
 };
 
-// Crear nuevo producto
+
 exports.addProducto = async (req, res) => {
   console.log('Se recibió POST /api/productos');
   console.log('Body recibido:', req.body);
 
   try {
     const { name, quantity, category, type, price, barcode, origen } = req.body;
+
+    // Obtener al usuario actual y sus colaboradores
+    const user = await User.findById(req.user.id).populate('colaboradores', '_id');
+    const colaboradoresIds = user.colaboradores.map(c => c._id);
+    const owners = [req.user.id, ...colaboradoresIds];
 
     const nuevoProducto = new Producto({
       name,
@@ -26,7 +36,7 @@ exports.addProducto = async (req, res) => {
       price,
       barcode,
       origen: origen || 'lista',
-      owners: [req.user.id]
+      owners // Todos los colaboradores verán este producto
     });
 
     await nuevoProducto.save();
@@ -35,6 +45,7 @@ exports.addProducto = async (req, res) => {
     res.status(500).json({ error: 'Error al guardar el producto' });
   }
 };
+
 
 // Eliminar producto del usuario actual
 exports.deleteProducto = async (req, res) => {
