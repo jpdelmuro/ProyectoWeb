@@ -315,8 +315,10 @@
                   item.setAttribute("data-id", producto._id);
                   item.innerHTML = `
                     ${producto.name} (x${producto.quantity}) 
-                    <i class="fa-solid fa-check text-success eliminar-producto" style="cursor: pointer;" data-id="${producto._id}"></i>
+                    <i class="fa-solid fa-check text-success eliminar-producto" title="Marcar como comprado" style="cursor: pointer;" data-id="${producto._id}"></i>
                   `;
+
+
                   lista.appendChild(item);
                 }
               
@@ -357,7 +359,8 @@
                           name: nombre,
                           quantity: cantidad,
                           category: categoria,
-                          type: 'shoppingList'
+                          type: 'shoppingList',
+                          origen: "lista"
                         })
                       });
               

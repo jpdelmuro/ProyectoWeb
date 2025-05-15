@@ -16,7 +16,7 @@ exports.addProducto = async (req, res) => {
   console.log('Body recibido:', req.body);
 
   try {
-    const { name, quantity, category, type, price, barcode } = req.body;
+    const { name, quantity, category, type, price, barcode, origen } = req.body;
 
     const nuevoProducto = new Producto({
       name,
@@ -25,6 +25,7 @@ exports.addProducto = async (req, res) => {
       type,
       price,
       barcode,
+      origen: origen || 'lista',
       owners: [req.user.id]
     });
 
@@ -38,20 +39,26 @@ exports.addProducto = async (req, res) => {
 // Eliminar producto del usuario actual
 exports.deleteProducto = async (req, res) => {
   try {
-    const producto = await Producto.findOneAndDelete({
-      _id: req.params.id,
-      owners: req.user.id
-    });
+    const producto = await Producto.findOne({ _id: req.params.id, owners: req.user.id });
 
     if (!producto) {
       return res.status(404).json({ message: 'Producto no encontrado o no autorizado' });
     }
 
-    res.json({ message: 'Producto eliminado', producto });
+    const forzar = req.query.forzar === "true";
+    if (producto.origen === 'lista' || forzar) {
+      await producto.deleteOne();
+      return res.json({ message: 'Producto eliminado permanentemente', producto });
+    } else {
+      producto.type = 'inventory';
+      await producto.save();
+      return res.json({ message: 'Producto regresado al inventario ideal', producto });
+    }
   } catch (err) {
-    res.status(500).json({ error: 'Error al eliminar el producto' });
+    res.status(500).json({ error: 'Error al manejar la eliminación del producto' });
   }
 };
+
 
 // Buscar producto por código de barras
 exports.getByBarcode = async (req, res) => {

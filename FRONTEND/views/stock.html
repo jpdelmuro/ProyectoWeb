@@ -518,6 +518,7 @@
                       quantity: cantidad,
                       category: categoria,
                       type: 'inventory',
+                      origen: "stock",
                       price: precio,
                       barcode: barcode
                     })
@@ -676,14 +677,14 @@
               if (!confirm("¿Estás seguro de que quieres eliminar este producto?")) return;
         
               try {
-                const res = await fetch(`${backend_url}api/productos/${id}`, {
+                const res = await fetch(`${backend_url}api/productos/${id}?forzar=true`, {
                   method: 'DELETE',
                   headers: getAuthHeaders()
                 });
-        
+
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.message || "Error al eliminar");
-        
+
                 alert("Producto eliminado con éxito");
                 bootstrap.Modal.getInstance(document.getElementById("modalEditarProducto")).hide();
                 window.location.reload();

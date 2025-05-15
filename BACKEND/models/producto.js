@@ -7,6 +7,7 @@ const productoSchema = new mongoose.Schema({
   type: { type: String, enum: ['shoppingList', 'inventory'], required: true },
   price: { type: String },
   barcode: { type: String },
+  origen: { type: String, enum: ['stock', 'lista'], required: true },
   owners: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
 });
 
