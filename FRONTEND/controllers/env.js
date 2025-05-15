@@ -15,7 +15,6 @@ export const frontend_url = isLocalhost
 export function validateLogin(redirectTo = "login.html") {
   const user = sessionStorage.getItem("user");
   if (!user || user === 'undefined') {
-    alert("Favor de iniciar sesión");
     window.location.href = frontend_url + redirectTo;
   }
 }
