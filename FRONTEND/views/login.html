@@ -65,8 +65,18 @@
 
 <script type="module">
   import { login } from '../controllers/auth_controllers.js';
+
+  // Si hay usuario recordado en localStorage, cargarlo directamente
+  const saved = localStorage.getItem("user");
+  if (saved) {
+    sessionStorage.setItem("user", saved);
+    window.location.href = "index.html";
+  }
+
+  // Escuchar el formulario
   document.getElementById('formLogin').addEventListener('submit', login);
 </script>
+  
 
 </body>
 </html>

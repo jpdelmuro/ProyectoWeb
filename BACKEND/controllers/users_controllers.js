@@ -109,11 +109,73 @@ exports.agregarColaborador = async (req, res) => {
       return res.status(400).json({ error: "Colaborador ya añadido." });
     }
 
-    usuarioPrincipal.colaboradores.push(colaborador._id);
-    await usuarioPrincipal.save();
+    // Verifica que la solicitud no haya sido enviada antes
+    if (colaborador.solicitudesPendientes.includes(usuarioPrincipal._id)) {
+      return res.status(400).json({ error: "Ya enviaste una solicitud a este usuario." });
+    }
 
-    res.status(200).json({ message: "Colaborador añadido correctamente." });
+    // Agrega solicitud pendiente al colaborador
+    colaborador.solicitudesPendientes.push(usuarioPrincipal._id);
+    await colaborador.save();
+
+    res.status(200).json({ message: "Solicitud enviada. Esperando confirmación." });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
+// GET /api/users/:id/colaboradores - Obtener los colaboradores de un usuario
+exports.getColaboradores = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).populate('colaboradores', 'nombre correo');
+    if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
+
+    res.json(user.colaboradores);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+// POST /api/users/:id/aceptar-colaborador
+exports.aceptarColaborador = async (req, res) => {
+  const { id } = req.params; // usuario que acepta la solicitud
+  const { solicitanteId } = req.body; // quien envió la solicitud
+
+  try {
+    const usuario = await User.findById(id); // el que acepta
+    const solicitante = await User.findById(solicitanteId); // el que envió
+
+    if (!usuario || !solicitante) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    // Validar que la solicitud sí existe
+    if (!usuario.solicitudesPendientes.includes(solicitanteId)) {
+      return res.status(400).json({ error: "No hay solicitud pendiente de este usuario" });
+    }
+
+    // Agregarse mutuamente como colaboradores
+    if (!usuario.colaboradores.includes(solicitanteId)) {
+      usuario.colaboradores.push(solicitanteId);
+    }
+
+    if (!solicitante.colaboradores.includes(id)) {
+      solicitante.colaboradores.push(id);
+    }
+
+    // Quitar solicitud pendiente
+    usuario.solicitudesPendientes = usuario.solicitudesPendientes.filter(
+      uid => uid.toString() !== solicitanteId
+    );
+
+    await usuario.save();
+    await solicitante.save();
+
+    res.status(200).json({ message: "Solicitud aceptada. Ahora son colaboradores." });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+

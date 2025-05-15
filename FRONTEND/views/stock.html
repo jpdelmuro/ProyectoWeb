@@ -132,7 +132,8 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <a href="login.html" class="btn btn-danger">Cerrar sesión</a>
+                            <button id="btnCerrarSesion" class="btn btn-danger">Cerrar sesión</button>
+
                         </div>
                     </div>
                 </div>
@@ -518,6 +519,7 @@
                       quantity: cantidad,
                       category: categoria,
                       type: 'inventory',
+                      origen: "stock",
                       price: precio,
                       barcode: barcode
                     })
@@ -676,14 +678,14 @@
               if (!confirm("¿Estás seguro de que quieres eliminar este producto?")) return;
         
               try {
-                const res = await fetch(`${backend_url}api/productos/${id}`, {
+                const res = await fetch(`${backend_url}api/productos/${id}?forzar=true`, {
                   method: 'DELETE',
                   headers: getAuthHeaders()
                 });
-        
+
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.message || "Error al eliminar");
-        
+
                 alert("Producto eliminado con éxito");
                 bootstrap.Modal.getInstance(document.getElementById("modalEditarProducto")).hide();
                 window.location.reload();
@@ -697,5 +699,12 @@
           import { validateLogin } from '../controllers/env.js';
           validateLogin(); 
         </script>        
+        <script type="module">
+          import { logout } from '../controllers/auth_controllers.js';
+
+          document.getElementById("btnCerrarSesion").addEventListener("click", () => {
+            logout();
+          });
+        </script>
     </body>
 </html>

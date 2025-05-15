@@ -1,22 +1,32 @@
 const Producto = require('../models/producto');
+const User = require('../models/user'); // Importante: asegúrate de importar el modelo User arriba
 
-// Obtener productos del usuario actual
 exports.getProductos = async (req, res) => {
   try {
-    const productos = await Producto.find({ owners: req.user.id });
+    const user = await User.findById(req.user.id).populate('colaboradores', '_id');
+    const colaboradoresIds = user.colaboradores.map(c => c._id);
+    const idsPermitidos = [req.user.id, ...colaboradoresIds];
+
+    const productos = await Producto.find({ owners: { $in: idsPermitidos } });
+
     res.status(200).json(productos);
   } catch (error) {
     res.status(500).json({ error: 'Error al obtener los productos' });
   }
 };
 
-// Crear nuevo producto
+
 exports.addProducto = async (req, res) => {
   console.log('Se recibió POST /api/productos');
   console.log('Body recibido:', req.body);
 
   try {
-    const { name, quantity, category, type, price, barcode } = req.body;
+    const { name, quantity, category, type, price, barcode, origen } = req.body;
+
+    // Obtener al usuario actual y sus colaboradores
+    const user = await User.findById(req.user.id).populate('colaboradores', '_id');
+    const colaboradoresIds = user.colaboradores.map(c => c._id);
+    const owners = [req.user.id, ...colaboradoresIds];
 
     const nuevoProducto = new Producto({
       name,
@@ -25,7 +35,8 @@ exports.addProducto = async (req, res) => {
       type,
       price,
       barcode,
-      owners: [req.user.id]
+      origen: origen || 'lista',
+      owners // Todos los colaboradores verán este producto
     });
 
     await nuevoProducto.save();
@@ -35,23 +46,30 @@ exports.addProducto = async (req, res) => {
   }
 };
 
+
 // Eliminar producto del usuario actual
 exports.deleteProducto = async (req, res) => {
   try {
-    const producto = await Producto.findOneAndDelete({
-      _id: req.params.id,
-      owners: req.user.id
-    });
+    const producto = await Producto.findOne({ _id: req.params.id, owners: req.user.id });
 
     if (!producto) {
       return res.status(404).json({ message: 'Producto no encontrado o no autorizado' });
     }
 
-    res.json({ message: 'Producto eliminado', producto });
+    const forzar = req.query.forzar === "true";
+    if (producto.origen === 'lista' || forzar) {
+      await producto.deleteOne();
+      return res.json({ message: 'Producto eliminado permanentemente', producto });
+    } else {
+      producto.type = 'inventory';
+      await producto.save();
+      return res.json({ message: 'Producto regresado al inventario ideal', producto });
+    }
   } catch (err) {
-    res.status(500).json({ error: 'Error al eliminar el producto' });
+    res.status(500).json({ error: 'Error al manejar la eliminación del producto' });
   }
 };
+
 
 // Buscar producto por código de barras
 exports.getByBarcode = async (req, res) => {

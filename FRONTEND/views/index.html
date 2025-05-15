@@ -132,7 +132,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <a href="login.html" class="btn btn-danger">Cerrar sesión</a>
+                            <button id="btnCerrarSesion" class="btn btn-danger">Cerrar sesión</button>
                         </div>
                     </div>
                 </div>
@@ -315,8 +315,10 @@
                   item.setAttribute("data-id", producto._id);
                   item.innerHTML = `
                     ${producto.name} (x${producto.quantity}) 
-                    <i class="fa-solid fa-check text-success eliminar-producto" style="cursor: pointer;" data-id="${producto._id}"></i>
+                    <i class="fa-solid fa-check text-success eliminar-producto" title="Marcar como comprado" style="cursor: pointer;" data-id="${producto._id}"></i>
                   `;
+
+
                   lista.appendChild(item);
                 }
               
@@ -357,7 +359,8 @@
                           name: nombre,
                           quantity: cantidad,
                           category: categoria,
-                          type: 'shoppingList'
+                          type: 'shoppingList',
+                          origen: "lista"
                         })
                       });
               
@@ -409,5 +412,13 @@
       import { validateLogin } from '../controllers/env.js';
       validateLogin(); 
     </script>   
+    <script type="module">
+      import { logout } from '../controllers/auth_controllers.js';
+
+      document.getElementById("btnCerrarSesion").addEventListener("click", () => {
+        logout();
+      });
+    </script>
+
     </body>
 </html>
