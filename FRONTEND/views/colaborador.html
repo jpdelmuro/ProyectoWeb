@@ -88,7 +88,7 @@
           <div class="modal-body">¿Estás seguro que deseas cerrar sesión?</div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <a href="login.html" class="btn btn-danger">Cerrar sesión</a>
+            <button id="btnCerrarSesion" class="btn btn-danger">Cerrar sesión</button>
           </div>
         </div>
       </div>
@@ -100,7 +100,7 @@
     <h1 style="color: white; text-align: center; font-weight: bold;">Añadir a alguien</h1>
     <br>
 
-    <div class="container d-flex justify-content-center">
+    <div class="container d-flex justify-content-center align-items-center" style="height: 50vh;">
       <div class="form-container">
         <h4 style="color: white; text-align: center; font-weight: bold;">¿A quién quieres añadir?</h4>
         <form id="formColaborador">
@@ -110,9 +110,6 @@
           </div>
           <button type="submit" class="btn btn-primary">Añadir</button>
         </form>
-
-        <h4>Mis colaboradores</h4>
-        <ul id="listaColaboradores" class="list-group"></ul>
       </div>
     </div>
   </main>
@@ -141,8 +138,15 @@
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
-
-  <!-- Tu controlador -->
   <script type="module" src="../controllers/colab_controllers.js"></script>
+
+  <script type="module">
+    import { logout } from '../controllers/auth_controllers.js';
+
+    document.getElementById("btnCerrarSesion").addEventListener("click", () => {
+      logout();
+    });
+  </script>
+
 </body>
 </html>

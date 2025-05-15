@@ -78,7 +78,9 @@
             <div class="modal-body">¿Estás seguro que deseas cerrar sesión?</div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-              <a href="login.html" class="btn btn-danger">Cerrar sesión</a>
+              <button id="btnCerrarSesion" class="btn btn-danger">Cerrar sesión</button>
+
+
             </div>
           </div>
         </div>
@@ -164,6 +166,14 @@
         if (emailInput) emailInput.value = user.correo || "";
       });
     </script>
+    <script type="module">
+      import { logout } from '../controllers/auth_controllers.js';
+
+      document.getElementById("btnCerrarSesion").addEventListener("click", () => {
+        logout();
+      });
+    </script>
+
     
 
   </body>

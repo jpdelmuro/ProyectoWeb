@@ -132,7 +132,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <a href="login.html" class="btn btn-danger">Cerrar sesión</a>
+                            <button id="btnCerrarSesion" class="btn btn-danger">Cerrar sesión</button>
                         </div>
                     </div>
                 </div>
@@ -412,5 +412,13 @@
       import { validateLogin } from '../controllers/env.js';
       validateLogin(); 
     </script>   
+    <script type="module">
+      import { logout } from '../controllers/auth_controllers.js';
+
+      document.getElementById("btnCerrarSesion").addEventListener("click", () => {
+        logout();
+      });
+    </script>
+
     </body>
 </html>
