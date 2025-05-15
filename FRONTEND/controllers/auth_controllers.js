@@ -31,7 +31,9 @@ export function login(event) {
       return response.json();
     })
     .then(data => {
-      sessionStorage.setItem("user", JSON.stringify({
+      const recordar = document.getElementById("recordar").checked;
+
+      const userData = JSON.stringify({
         token: data.token,
         user: {
           _id: data.user.id,       
@@ -39,7 +41,14 @@ export function login(event) {
           correo: data.user.correo,
           pass: pass
         }
-      }));
+      });
+
+      if (recordar) {
+        localStorage.setItem("user", userData);
+      } else {
+        sessionStorage.setItem("user", userData);
+      }
+
       window.location.href = frontend_url + 'index.html';
     })
     .catch(err => {
@@ -85,8 +94,10 @@ export function register(event) {
 // Logout
 export function logout() {
   sessionStorage.clear();
+  localStorage.removeItem("user");
   window.location.href = frontend_url + 'login.html';
 }
+
 
 // Modal de edición
 export function populateModal() {
