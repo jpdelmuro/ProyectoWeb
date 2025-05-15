@@ -96,16 +96,18 @@
         <div class="form-container" style="width: 100%; max-width: 400px;">
           <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="Perfil" class="rounded-circle mb-4" width="100" height="100">
 
-          <form>
-            <input type="text" class="form-control" id="editName" placeholder="Nombre" required>
-            <input type="email" class="form-control" id="editEmail" placeholder="correo@correo.com" required>
-            <input type="password" class="form-control" id="newPwd" placeholder="Nueva contraseña (opcional)">
-            <input type="password" class="form-control" id="currentPwd" placeholder="Contraseña actual" required>
-
+          <div class="m-4">
+      <form>
+        <input type="text" class="form-control mb-2" id="editName" placeholder="Nombre" required>
+        <input type="email" class="form-control mb-2" id="editEmail" placeholder="correo@correo.com" required>
+        <input type="password" class="form-control mb-2" id="newPwd" placeholder="Nueva contraseña (opcional)">
+        <input type="password" class="form-control mb-3" id="currentPwd" placeholder="Contraseña actual" required>
 
         <button type="submit" class="btn btn-primary w-100 mb-2">Guardar cambios</button>
         <button type="button" class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#modalEliminar">Eliminar usuario</button>
       </form>
+    </div>
+
     </div>
         </div>
       </div>
